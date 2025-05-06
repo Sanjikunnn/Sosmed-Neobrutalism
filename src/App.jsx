@@ -149,6 +149,37 @@ function App() {
           </button>
           <p className="mt-4 text-sm">Post your daily and share your story 🚀</p>
         </div>
+        {/* Notifications Section */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full">
+          <h2 className="text-3xl font-bold col-span-full">Notifications</h2>
+          <div className="bg-white p-4 border-4 border-black shadow-[4px_4px_0_0_black]">
+            <FaBell className="text-2xl mb-2" />
+            <p className="text-base">Kamu punya 3 notifikasi baru!</p>
+            <p className="text-sm text-gray-600">Cek sekarang untuk melihat update dari temanmu.</p>
+          </div>
+        </section>
+
+        {/* Story Highlights Section */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full">
+          <h2 className="text-3xl font-bold mb-4 col-span-full">Story Highlights</h2>
+          <div className="flex justify-center gap-4 pb-2 border-b-4 border-black">
+            {['Aulia', 'Bima', 'Iqbal'].map((name, index) => (
+              <div key={index} className="min-w-[100px] flex-shrink-0 border-4 border-black bg-white shadow-[4px_4px_0_0_black] p-2 text-center">
+                <div className="w-20 h-20 rounded-full bg-yellow-200 mb-2"></div>
+                <p className="text-sm font-bold">{name}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Call To Action Section */}
+        <section className="w-full mt-8 text-center">
+          <h2 className="text-4xl font-extrabold">Gabung dan Ekspresikan Dirimu 🎉</h2>
+          <p className="text-gray-700 mt-2 mb-4">Yuk mulai berbagi cerita hari ini!</p>
+          <button className="bg-green-600 hover:bg-fuchsia-700 text-white py-2 px-2 text-lg font-bold border-4 border-black shadow-[6px_6px_0_0_black] rounded-full transition-all duration-200">
+            Get Started
+          </button>
+        </section>
       </main>
 
       {/* Footer */}
