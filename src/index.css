@@ -28,15 +28,13 @@
   a:hover {
     @apply text-blue-900;
   }
-
   button {
-    @apply rounded-none border-2 border-black px-4 py-2 text-base font-bold bg-white hover:bg-black hover:text-white transition-colors duration-300;
+    @apply rounded-none border-2 border-black px-4 py-2 text-base font-bold bg-white hover:bg-fuchsia-500 hover:text-white transition-colors duration-300;
   }
-
   button:hover,
   button:focus,
   button:focus-visible {
-    outline: 4px dashed black;
+    outline: 4px dashed rgb(0, 0, 0);
     outline-offset: 2px;
   }
 
@@ -73,6 +71,13 @@
   }
 
   img:hover {
+    @apply transform scale-110;
+  }
+  section div {
+    @apply transition-transform duration-300 ease-in-out;
+  }
+
+  section div:hover {
     @apply transform scale-110;
   }
 }
