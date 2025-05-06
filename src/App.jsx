@@ -158,19 +158,27 @@ function App() {
             <p className="text-sm text-gray-600">Cek sekarang untuk melihat update dari temanmu.</p>
           </div>
         </section>
-
         {/* Story Highlights Section */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full">
-          <h2 className="text-3xl font-bold mb-4 col-span-full">Story Highlights</h2>
-          <div className="flex justify-center gap-4 pb-2 border-b-4 border-black">
-            {['Aulia', 'Bima', 'Iqbal'].map((name, index) => (
-              <div key={index} className="min-w-[100px] flex-shrink-0 border-4 border-black bg-white shadow-[4px_4px_0_0_black] p-2 text-center">
-                <div className="w-20 h-20 rounded-full bg-yellow-200 mb-2"></div>
-                <p className="text-sm font-bold">{name}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <section className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6 mt-6 w-full">
+  <h2 className="text-3xl font-bold mb-4 col-span-full">Story Highlights</h2>
+  <div className="scroll-container">
+    <div className="auto-scroll">
+      {['Aulia', 'Bima', 'Iqbal', 'Dea', 'Riska'].map((name, index) => (
+        <div key={index} className="scroll-item">
+          <div className="w-20 h-20 rounded-full bg-yellow-200 mb-2 border-4 border-black shadow-[4px_4px_0_0_black]"></div>
+          <p className="text-sm font-bold">{name}</p>
+        </div>
+      ))}
+      {/* Duplikasi elemen untuk efek smooth */}
+      {['Aulia', 'Bima', 'Iqbal', 'Dea', 'Riska'].map((name, index) => (
+        <div key={`duplicate-${index}`} className="scroll-item">
+          <div className="w-20 h-20 rounded-full bg-yellow-200 mb-2 border-4 border-black shadow-[4px_4px_0_0_black]"></div>
+          <p className="text-sm font-bold">{name}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
 
         {/* Call To Action Section */}
         <section className="w-full mt-8 text-center">

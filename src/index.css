@@ -97,3 +97,31 @@
     background-color: #f0f0f0;
   }
 }
+@keyframes autoScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.scroll-container {
+  overflow: hidden;
+  width: 100%;
+}
+
+.auto-scroll {
+  display: flex;
+  width: max-content;
+  animation: autoScroll 10s linear infinite;
+  white-space: nowrap;
+}
+.scroll-item {
+  flex-shrink: 0;
+  padding: 0 20px;
+  min-width: 100px;
+}
+.auto-scroll:hover {
+  animation-play-state: paused;
+}
