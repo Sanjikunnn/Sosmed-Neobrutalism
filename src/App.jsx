@@ -21,18 +21,19 @@ function App() {
         {/* Routing for Auth pages */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
-        {/* Routing for Main App layout */}
-        <Route path="/" element={<MainLayout />}>
+ 
           {/* Routing for Admin */}
-          <Route path="/admin" element={<AdminHome />} />
+          <Route path="/admin/home" element={<AdminHome />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/profile" element={<AdminProfile />} />
 
           {/* Routing for User */}
-          <Route path="/user" element={<UserHome />} />
+          <Route path="/user/home" element={<UserHome />} />
           <Route path="/user/post" element={<UserPost />} />
           <Route path="/user/profile" element={<UserProfile />} />
+          
+        {/* Routing for Main App layout */}
+        <Route path="/" element={<MainLayout />}>
         </Route>
       </Routes>
     </Router>

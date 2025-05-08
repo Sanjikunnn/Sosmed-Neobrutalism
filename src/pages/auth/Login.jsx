@@ -20,8 +20,13 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Login data:', form);
-    // Lakukan login di sini
+  
+    // TODO: Validasi login asli nanti di sini
+  
+    // Setelah login sukses:
+    navigate('/admin/home'); // Ganti dengan rute yang sesuai untuk halaman utama pengguna
   };
+  
 
   // Custom function to handle back navigation with fallback
   const handleBack = () => {
@@ -90,8 +95,6 @@ const Login = () => {
                 onClick={handleSignupRedirect}
                 className="text-blue-600 hover:underline"
                 style={{ cursor: 'pointer' }}
-                hover
-                onMouseOver={(e) => (e.currentTarget.style.textDecoration = 'underline')}  
               >
                 Signup
               </a>
