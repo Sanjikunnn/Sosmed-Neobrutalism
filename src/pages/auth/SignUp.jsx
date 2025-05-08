@@ -20,35 +20,57 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const { email, password } = form;
-
+  
     if (!/\S+@\S+\.\S+/.test(email)) {
       await showAlert('Email Salah!', 'Format email tidak valid!', 'warning');
       return;
     }
-    
+  
     if (password.length < 6) {
       await showAlert('Password Lemah!', 'Minimal 6 karakter ya boss!', 'warning');
       return;
     }
-    
+  
     try {
+      // Melakukan signup dengan Supabase Authentication
       const { data, error } = await supabase.auth.signUp({ email, password });
-    
+  
       if (error) {
         await showAlert('Signup Gagal!', error.message, 'error');
         return;
       }
-    
+  
+      // Setelah signup sukses, menambahkan data pengguna ke tabel 'users'
+      const userId = data.user.id; // Ambil UUID pengguna dari data yang dikembalikan
+      const { error: insertError } = await supabase
+        .from('users')
+        .insert([
+          {
+            id: userId, // Simpan UUID pengguna di tabel 'users'
+            username: email.split('@')[0], // Misalnya, username default bisa diambil dari email
+            badge: 'default', // Badge default
+            email: email,  // Menyimpan email pengguna
+          }
+        ]);
+  
+      if (insertError) {
+        console.error("Gagal menambahkan data pengguna:", insertError);
+        await showAlert('Oops!', 'Terjadi kesalahan saat menambahkan data pengguna.', 'error');
+        return;
+      }
+  
+      // Tampilkan alert sukses dan arahkan ke halaman login
       await showAlert('Berhasil!', 'Signup sukses! Cek email kamu buat verifikasi.', 'success');
       navigate('/login');
     } catch (err) {
       console.error(err);
       await showAlert('Oops!', 'Terjadi kesalahan saat signup.', 'error');
     }
-    
   };
+  
+  
   const showAlert = async (title, text, icon = 'error') => {
     await Swal.fire({
       title: `<strong class="text-2xl font-bold underline underline-offset-2 tracking-wide">${title}</strong>`,
