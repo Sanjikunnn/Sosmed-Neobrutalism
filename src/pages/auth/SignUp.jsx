@@ -5,6 +5,7 @@ import Button from '../../components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../utils/supabase';
+import Swal from 'sweetalert2';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -22,36 +23,50 @@ const Signup = () => {
 
     const { email, password } = form;
 
-    // Validasi
     if (!/\S+@\S+\.\S+/.test(email)) {
-      alert('Email tidak valid!');
+      await showAlert('Email Salah!', 'Format email tidak valid!', 'warning');
       return;
     }
-
+    
     if (password.length < 6) {
-      alert('Password minimal 6 karakter!');
+      await showAlert('Password Lemah!', 'Minimal 6 karakter ya boss!', 'warning');
       return;
     }
-
+    
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
+      const { data, error } = await supabase.auth.signUp({ email, password });
+    
       if (error) {
-        alert(`Signup gagal: ${error.message}`);
+        await showAlert('Signup Gagal!', error.message, 'error');
         return;
       }
-
-      alert('Signup berhasil! Silakan cek email untuk verifikasi.');
+    
+      await showAlert('Berhasil!', 'Signup sukses! Cek email kamu buat verifikasi.', 'success');
       navigate('/login');
     } catch (err) {
-      alert('Terjadi kesalahan saat signup.');
       console.error(err);
+      await showAlert('Oops!', 'Terjadi kesalahan saat signup.', 'error');
     }
+    
   };
+  const showAlert = async (title, text, icon = 'error') => {
+    await Swal.fire({
+      title: `<strong class="text-2xl font-bold underline underline-offset-2 tracking-wide">${title}</strong>`,
+      html: `<p class="text-base font-medium text-black drop-shadow-[1px_1px_0px_#FF4D6E]">${text}</p>`,
+      icon: icon,
+      confirmButtonText: 'SIAP🚀!',
+      background: '#FFFBCC',
+      color: '#000',
+      buttonsStyling: false,
+      customClass: {
+        popup: 'w-[360px] border-[4px] border-black shadow-[6px_6px_0px_#000] rounded-none px-4 py-5',
+        confirmButton: 'bg-[#FF4D6E] text-black text-sm font-bold px-6 py-2 border-2 border-black shadow-[3px_3px_0px_#000] rounded-none hover:bg-fuchsia hover:text-white transition-all duration-200',
+      }
+    });
+    window.location.reload();
 
+  };
+  
   const handleBack = () => {
     if (window.history.state && window.history.state.idx > 0) {
       navigate(-1);
