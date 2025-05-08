@@ -4,36 +4,62 @@ import InputField from '../../components/InputField';
 import Button from '../../components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { supabase } from '../../utils/supabase';
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
-    username: '',
+    email: '',
     password: '',
   });
-
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Signup data:', form);
-  };
 
-  // Custom function to handle back navigation with fallback
-  const handleBack = () => {
-    if (window.history.state && window.history.state.idx > 0) {
-      // If there's a history entry, go back
-      navigate(-1); // This should update the URL and go to the previous page
-    } else {
-      // No history entry, go to the home page
-      navigate('/'); // This will update the URL to the homepage
+    const { email, password } = form;
+
+    // Validasi
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      alert('Email tidak valid!');
+      return;
+    }
+
+    if (password.length < 6) {
+      alert('Password minimal 6 karakter!');
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        alert(`Signup gagal: ${error.message}`);
+        return;
+      }
+
+      alert('Signup berhasil! Silakan cek email untuk verifikasi.');
+      navigate('/login');
+    } catch (err) {
+      alert('Terjadi kesalahan saat signup.');
+      console.error(err);
     }
   };
 
-  // Navigate to login page
+  const handleBack = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
+
   const handleLoginRedirect = () => {
     navigate('/login');
   };
@@ -58,12 +84,12 @@ const Signup = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <InputField
-              label="Username"
-              type="text"
-              name="username"
-              value={form.username}
+              label="Email"
+              type="email"
+              name="email"
+              value={form.email}
               onChange={handleChange}
-              placeholder="Enter your username"
+              placeholder="youremail@example.com"
               className="bg-yellow-100 border-4 border-black text-black font-bold py-3 px-4 -mb-4 rounded-none shadow-[4px_4px_0px_#000] focus:outline-none focus:ring-4 focus:ring-[#FF4D6E]"
             />
             <InputField
@@ -72,7 +98,7 @@ const Signup = () => {
               name="password"
               value={form.password}
               onChange={handleChange}
-              placeholder="Enter your password"
+              placeholder="Minimal 6 karakter"
               className="bg-yellow-100 border-4 border-black text-black font-bold py-3 px-4 mb-4 rounded-none shadow-[4px_4px_0px_#000] focus:outline-none focus:ring-4 focus:ring-[#FF4D6E]"
             />
             <Button
@@ -86,15 +112,12 @@ const Signup = () => {
           <div className="text-center mt-4">
             <p className="text-sm">
               Already have an account?{' '}
-              <a
+              <span
                 onClick={handleLoginRedirect}
-                className="text-blue-600 hover:underline"
-                style={{ cursor: 'pointer' }}
-                hover
-                onMouseOver={(e) => (e.currentTarget.style.textDecoration = 'underline')}  
+                className="text-blue-600 hover:underline cursor-pointer"
               >
                 Login
-              </a>
+              </span>
             </p>
           </div>
         </div>

@@ -7,7 +7,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const Login = () => {
   const [form, setForm] = useState({
-    username: '',
+    email: '',
     password: '',
   });
 
@@ -26,7 +26,6 @@ const Login = () => {
     // Setelah login sukses:
     navigate('/admin/home'); // Ganti dengan rute yang sesuai untuk halaman utama pengguna
   };
-  
 
   // Custom function to handle back navigation with fallback
   const handleBack = () => {
@@ -39,10 +38,11 @@ const Login = () => {
     }
   };
 
-  // Navigate to login page
+  // Navigate to signup page
   const handleSignupRedirect = () => {
     navigate('/signup');
   };
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-yellow-200 px-4 relative">
       {/* Back Button */}
@@ -63,12 +63,12 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <InputField
-              label="Username"
-              type="text"
-              name="username"
-              value={form.username}
+              label="Email"
+              type="email"
+              name="email"
+              value={form.email}
               onChange={handleChange}
-              placeholder="Enter your username"
+              placeholder="Enter your email"
               className="bg-yellow-100 border-4 border-black text-black font-bold py-3 px-4 -mb-4 rounded-none shadow-[4px_4px_0px_#000] focus:outline-none focus:ring-4 focus:ring-[#FF4D6E]"
             />
             <InputField
