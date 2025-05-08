@@ -5,6 +5,7 @@ import Button from '../../components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../utils/supabase';  // Assuming supabase is correctly configured
+import Swal from 'sweetalert2';
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -22,41 +23,76 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = form;
-
-    // Basic validation
+  
     if (!/\S+@\S+\.\S+/.test(email)) {
-      alert('Email tidak valid!');
+      showAlert('Email Error', 'Email tidak valid!');
       return;
     }
-
+  
     if (password.length < 6) {
-      alert('Password minimal 6 karakter!');
+      showAlert('Password Error', 'Password minimal 6 karakter!');
       return;
     }
-
+  
     try {
-      setLoading(true); // Start loading state
-
+      setLoading(true);
+  
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-
+  
       if (error) {
-        alert(`Login gagal: ${error.message}`);
-        setLoading(false); // Stop loading if there's an error
+        showAlert('Login Gagal', error.message);
+        setLoading(false);
         return;
       }
-
-      alert('Login berhasil!');
-      navigate('/admin/home'); // Redirect after successful login
+  
+      Swal.fire({
+        title: 'Login Berhasil!',
+        icon: 'success',
+        text: 'Selamat datang kembali!',
+        timer: 1500,
+        showConfirmButton: false,
+        background: '#fff',
+        color: '#000',
+        customClass: {
+          popup: 'border-4 border-black shadow-[6px_6px_0px_#000] rounded-none',
+          title: 'text-2xl font-bold drop-shadow-[2px_2px_0px_#FF4D6E]',
+        }
+      });
+  
+      setTimeout(() => {
+        navigate('/admin/home');
+      }, 1600);
     } catch (err) {
-      alert('Terjadi kesalahan saat login.');
       console.error(err);
-      setLoading(false); // Stop loading on error
+      showAlert('Oops!', 'Terjadi kesalahan saat login.');
+      setLoading(false);
     }
   };
-
+  
+  const showAlert = async (title, text, icon = 'error') => {
+    await Swal.fire({
+      title: `<strong class="text-2xl font-bold underline underline-offset-2 tracking-wide">${title}</strong>`,
+      html: `<p class="text-base font-medium text-black drop-shadow-[1px_1px_0px_#FF4D6E]">${text}</p>`,
+      icon: icon,
+      confirmButtonText: 'SIAP🚀!',
+      background: '#FFFBCC',
+      color: '#000',
+      buttonsStyling: false,
+      customClass: {
+        popup: 'w-[360px] border-[4px] border-black shadow-[6px_6px_0px_#000] rounded-none px-4 py-5',
+        confirmButton: 'bg-[#FF4D6E] text-black text-sm font-bold px-6 py-2 border-2 border-black shadow-[3px_3px_0px_#000] rounded-none hover:bg-fuchsia hover:text-white transition-all duration-200',
+        title: '',
+      }
+    });
+  
+    window.location.reload();
+  };
+  
+  
+  
   // Custom function to handle back navigation with fallback
   const handleBack = () => {
     if (window.history.state && window.history.state.idx > 0) {
