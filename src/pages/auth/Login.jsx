@@ -4,6 +4,7 @@ import InputField from '../../components/InputField';
 import Button from '../../components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { supabase } from '../../utils/supabase';  // Assuming supabase is correctly configured
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -11,30 +12,57 @@ const Login = () => {
     password: '',
   });
 
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login data:', form);
-  
-    // TODO: Validasi login asli nanti di sini
-  
-    // Setelah login sukses:
-    navigate('/admin/home'); // Ganti dengan rute yang sesuai untuk halaman utama pengguna
+    const { email, password } = form;
+
+    // Basic validation
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      alert('Email tidak valid!');
+      return;
+    }
+
+    if (password.length < 6) {
+      alert('Password minimal 6 karakter!');
+      return;
+    }
+
+    try {
+      setLoading(true); // Start loading state
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        alert(`Login gagal: ${error.message}`);
+        setLoading(false); // Stop loading if there's an error
+        return;
+      }
+
+      alert('Login berhasil!');
+      navigate('/admin/home'); // Redirect after successful login
+    } catch (err) {
+      alert('Terjadi kesalahan saat login.');
+      console.error(err);
+      setLoading(false); // Stop loading on error
+    }
   };
 
   // Custom function to handle back navigation with fallback
   const handleBack = () => {
     if (window.history.state && window.history.state.idx > 0) {
-      // If there's a history entry, go back
-      navigate(-1); // This should update the URL and go to the previous page
+      navigate(-1); // If there's a history entry, go back
     } else {
-      // No history entry, go to the home page
-      navigate('/'); // This will update the URL to the homepage
+      navigate('/'); // No history entry, go to the home page
     }
   };
 
@@ -82,11 +110,12 @@ const Login = () => {
             />
             <Button
               type="submit"
-              label="Login"
+              label={loading ? 'Logging in...' : 'Login'}
               className="bg-[#FF4D6E] text-black border-4 border-black py-3 font-bold text-xl shadow-[4px_4px_0px_#000] rounded-none hover:bg-fuchsia hover:text-white transition"
+              disabled={loading}
             />
           </form>
-          
+
           {/* Already have an account? Link */}
           <div className="text-center mt-4">
             <p className="text-sm">
