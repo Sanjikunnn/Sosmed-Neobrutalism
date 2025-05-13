@@ -3,8 +3,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { supabase } from "../../utils/supabase";
 import Swal from 'sweetalert2';
-
-const MAX_CHARACTERS = 200;
+import { MAX_CHARACTERS, getBadgeIcon } from '../../components/Badge';
 
 const UserHome = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -185,15 +184,6 @@ const UserHome = () => {
     </div>
   );
 };
-const getBadgeIcon = (likes) => {
-  if (likes >= 100) return '👑'; // Top-tier
-  if (likes >= 50) return '🔥';  // Popular
-  if (likes >= 20) return '🌟';  // Not bad
-  if (likes >= 10) return '👍';  // Starter
-  return '🙂';                  // Newbie
-};
-
-
 const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handleCommentSubmit }) => {
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState([]);
