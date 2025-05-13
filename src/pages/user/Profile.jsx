@@ -19,38 +19,6 @@ const ProfileUser = () => {
     }));
   };
 
-  const handleCommentSubmit = async (postId, content) => {
-    if (!content.trim()) return;
-
-    try {
-      const { error } = await supabase
-        .from("comments")
-        .insert([{ content, post_id: postId, id_user: authUser.id }]);
-
-      if (error) throw error;
-
-      const { data: newCommentsData, error: fetchError } = await supabase
-        .from("comments")
-        .select("content, created_at, id_user")
-        .eq("post_id", postId)
-        .order("created_at", { ascending: true });
-
-      if (fetchError) throw fetchError;
-
-      setCommentsByPost((prev) => ({
-        ...prev,
-        [postId]: newCommentsData || [],
-      }));
-
-      setNewComments((prev) => ({
-        ...prev,
-        [postId]: "",
-      }));
-    } catch (error) {
-      console.error("Gagal menambahkan komentar:", error);
-    }
-  };
-
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
@@ -120,7 +88,7 @@ const ProfileUser = () => {
   }, []);
 
   return (
-      <div className="bg-[#FFFC00] text-black font-sans min-h-screen flex flex-col border-t-[10px] border-black">
+      <div className="bg-[#fdfdfd] text-black font-mono min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 p-6 text-center">
 
@@ -158,9 +126,9 @@ const ProfileUser = () => {
 
                 <button
                   onClick={() => toggleComments(post.id)}
-                  className="mt-3 inline-block bg-[#FF66C4] hover:bg-pink-500 text-black px-4 py-1.5 text-sm font-bold border-[3px] border-black rounded shadow-[2px_2px_0px_black] transition-all duration-200"
+                  className="mt-3 inline-block bg-[#FF66C4] hover:bg-pink-500 text-black px-2 py-1 text-sm font-bold border-[3px] border-black rounded shadow-[2px_2px_0px_black] transition-all duration-200"
                 >
-                  {showComments[post.id] ? "🙈 Tutup Komentar" : "💬 Lihat Komentar"}
+                  {showComments[post.id] ? "🙈" : "💬"}
                 </button>
                 {showComments[post.id] && (
                 <div className="mt-4 space-y-2 bg-gray-100 p-3 border-[2px] border-black rounded">
@@ -184,26 +152,6 @@ const ProfileUser = () => {
                   ) : (
                     <p className="text-sm text-gray-500">Belum ada komentar.</p>
                   )}
-
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handleCommentSubmit(post.id, newComments[post.id] || "");
-                    }}
-                    className="mt-3"
-                  >
-                    <input
-                      value={newComments[post.id] || ""}
-                      onChange={(e) =>
-                        setNewComments((prev) => ({
-                          ...prev,
-                          [post.id]: e.target.value,
-                        }))
-                      }
-                      placeholder="Tulis komentar..."
-                      className="w-full border-[3px] border-black px-3 py-2 text-sm bg-white rounded shadow-inner"
-                    />
-                  </form>
                 </div>
               )}
 

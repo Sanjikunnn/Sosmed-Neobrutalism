@@ -66,44 +66,39 @@ const UserHome = () => {
       Swal.fire({ icon: 'error', title: 'Login dahulu ya!' });
       return;
     }
-  
-    // Cek apakah user sudah like sebelumnya
+
     const { data: existingLike } = await supabase
       .from('posts_likes')
       .select('*')
       .eq('post_id', postId)
       .eq('id_user', currentUser.id)
       .maybeSingle();
-  
+
     if (existingLike) {
       Swal.fire({ icon: 'info', title: 'Kamu sudah menyukai postingan ini' });
       return;
     }
-  
-    // Insert like baru
+
     const { error: insertError } = await supabase
       .from('posts_likes')
       .insert([{ post_id: postId, id_user: currentUser.id, created_at: new Date() }]);
-  
+
     if (!insertError) {
-      // Ambil jumlah like terbaru
       const { data: allLikes } = await supabase
         .from('posts_likes')
         .select('*')
         .eq('post_id', postId);
-  
+
       const totalLikes = allLikes?.length || 0;
-  
-      // Update kolom `like` di tabel `posts`
+
       await supabase
         .from('posts')
         .update({ like: totalLikes })
         .eq('id', postId);
-  
+
       setRefresh(prev => !prev);
     }
   };
-  
 
   const handleCommentSubmit = async (postId, comment) => {
     if (!currentUser || comment.trim() === "") return;
@@ -137,31 +132,27 @@ const UserHome = () => {
   const findUserData = (userId) => {
     return users.find(u => u.id === userId) || { username: 'Anonim', badge: '❓' };
   };
-  const [isHovering, setIsHovering] = useState(false);
 
   return (
     <div className="bg-[#fdfdfd] text-black font-mono min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 p-6 text-center">
-        <h1 className="text-lg font-extrabold mb-4">Posting apa hari ini? 🥳</h1>
+      <main className="flex-1 p-2 text-center">
+        <h1 className="text-xl font-semibold mb-4">Apa yang ingin kamu posting hari ini?</h1>
 
         <textarea
           value={newPost}
           onChange={handlePostChange}
           placeholder="Tulis sesuatu..."
-          className="w-full p-4 border border-black bg-yellow-100 resize-none"
+          className="w-full p-4 border border-black bg-gray-100 rounded-md resize-none"
           rows="4"
         />
         <div className="text-left text-sm ml-1">{MAX_CHARACTERS - newPost.length} karakter tersisa</div>
         <button
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
           onClick={handlePostSubmit}
-          className="mt-2 bg-[#FF4D6E] text-white px-2 py-1 rounded transition-all duration-200"
+          className="mt-2 bg-[#FF4D6E] text-white px-4 py-2 rounded-lg transition-all duration-200 hover:bg-[#FF334D]"
         >
-          {isHovering ? '🚀' : 'POST'}
+          POST
         </button>
-
 
         <div className="mt-8 space-y-6">
           {posts.map((post) => {
@@ -184,6 +175,7 @@ const UserHome = () => {
     </div>
   );
 };
+
 const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handleCommentSubmit }) => {
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState([]);
@@ -203,8 +195,8 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
   };
 
   return (
-    <div className="border border-black bg-white p-2 shadow-md text-left">
-      <div className="font-bold">
+    <div className="border-2 border-black bg-white p-4 rounded-lg shadow-md text-left mb-4">
+      <div className="font-bold text-lg">
         {user.username} {getBadgeIcon(likes)}
       </div>
       <div className="my-2">{post.content}</div>
@@ -222,19 +214,18 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
 
       <div className="flex justify-between items-center mt-2">
         <button 
-          className="text-sm py-1 px-2 rounded"
+          className="text-sm py-1 px-2 rounded bg-blue-500 text-white"
           onClick={() => handlePostLike(post.id)}
         >
           ❤️ {likes}
         </button>
         <button 
-          className="text-sm py-1 px-2 rounded"
+          className="text-sm py-1 px-2 rounded bg-green-500 text-white"
           onClick={toggleComments}
         >
           💬 {comments.length}
         </button>
       </div>
-
 
       {showComments && (
         <div className="mt-4 space-y-2">
@@ -255,7 +246,7 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Tulis komentar..."
-              className="w-full border border-gray-300 px-2 py-0"
+              className="w-full border-2 border-gray-300 px-4 py-2 rounded-md"
             />
           </form>
         </div>
