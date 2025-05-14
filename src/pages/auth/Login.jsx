@@ -112,7 +112,7 @@ const Login = () => {
       {/* Back Button */}
       <button
         onClick={handleBack}
-        className="absolute -top-5 -left-2 text-sm text-blue-800 hover:text-white z-10 group"
+        className="absolute top-3 left-3 text-sm text-blue-800 hover:text-white z-10 group"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         <span className="text-sm hidden group-hover:inline-block">Back</span>

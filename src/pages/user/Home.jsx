@@ -4,6 +4,8 @@ import Footer from "../../components/Footer";
 import { supabase } from "../../utils/supabase";
 import Swal from 'sweetalert2';
 import { MAX_CHARACTERS, getBadgeIcon } from '../../components/Badge';
+import { useNavigate } from 'react-router-dom';
+import withAuth from "../../middleware/withAuth";
 
 const UserHome = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -11,6 +13,7 @@ const UserHome = () => {
   const [newPost, setNewPost] = useState("");
   const [users, setUsers] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +34,7 @@ const UserHome = () => {
     };
 
     fetchData();
-  }, [refresh]);
+  }, [refresh, navigate]);
 
   const handlePostChange = (e) => {
     if (e.target.value.length <= MAX_CHARACTERS) {
@@ -39,27 +42,33 @@ const UserHome = () => {
     }
   };
 
-  const handlePostSubmit = async (e) => {
-    e.preventDefault();
-    if (!currentUser) {
-      Swal.fire({ icon: 'error', title: 'Login dahulu ya!' });
-      return;
-    }
+const handlePostSubmit = async (e) => {
+  e.preventDefault();
+  const trimmedPost = newPost.trim();
 
-    if (newPost.trim() === "") return;
+  if (!currentUser) {
+    Swal.fire({ icon: 'error', title: 'Login dahulu ya!' });
+    return;
+  }
 
-    const { error } = await supabase
-      .from('posts')
-      .insert([{ content: newPost, id_user: currentUser.id, created_at: new Date() }]);
+  if (trimmedPost === "") {
+    Swal.fire({ icon: 'error', title: 'Isi postingan tidak boleh kosong!' });
+    return;
+  }
 
-    if (error) {
-      Swal.fire({ icon: 'error', title: 'Gagal kirim postingan' });
-    } else {
-      setNewPost("");
-      setRefresh(!refresh);
-      Swal.fire({ icon: 'success', title: 'Postingan berhasil!' });
-    }
-  };
+  const { error } = await supabase
+    .from('posts')
+    .insert([{ content: trimmedPost, id_user: currentUser.id, created_at: new Date() }]);
+
+  if (error) {
+    Swal.fire({ icon: 'error', title: 'Gagal kirim postingan' });
+  } else {
+    setNewPost("");
+    setRefresh(!refresh);
+    Swal.fire({ icon: 'success', title: 'Postingan berhasil!' });
+  }
+};
+
 
   const handlePostLike = async (postId) => {
     if (!currentUser) {
@@ -121,13 +130,15 @@ const UserHome = () => {
     return data?.length || 0;
   };
 
-  const getPostComments = async (postId) => {
-    const { data } = await supabase
-      .from('comments')
-      .select('*')
-      .eq('post_id', postId);
-    return data || [];
-  };
+const getPostComments = async (postId) => {
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*, users(id, username)')
+    .eq('post_id', postId);
+
+  return data || [];
+};
+
 
   const findUserData = (userId) => {
     return users.find(u => u.id === userId) || { username: 'Anonim', badge: '❓' };
@@ -231,9 +242,10 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
         <div className="mt-4 space-y-2">
           {comments.map((comment, index) => (
             <div key={index} className="text-sm border-t pt-2">
-              <strong>{user.username}</strong>: {comment.content}
+              <strong>{comment.users?.username || 'Anonim'}</strong>: {comment.content}
             </div>
           ))}
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -255,4 +267,4 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
   );
 };
 
-export default UserHome;
+export default  withAuth(UserHome);

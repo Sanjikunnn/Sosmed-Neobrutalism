@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from "../../utils/supabase";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { MAX_CHARACTERS, getBadgeIcon } from '../../components/Badge';
+import { MAX_CHARACTERS, getBadgeIcon, getCommentBadgeIcon } from '../../components/Badge';
+import { getBadgeLabel, getCommentBadgeLabel } from '../../components/Badgee';
+import withAuth from "../../middleware/withAuth";
 
 const ProfileUser = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -10,7 +12,6 @@ const ProfileUser = () => {
   const [posts, setPosts] = useState([]);
   const [commentsByPost, setCommentsByPost] = useState({});
   const [showComments, setShowComments] = useState({});
-  const [newComments, setNewComments] = useState({});
 
   const toggleComments = (postId) => {
     setShowComments((prev) => ({
@@ -28,11 +29,12 @@ const ProfileUser = () => {
     
         setAuthUser(user);
     
-        const { data: userPosts, error: postsError } = await supabase
-          .from("posts")
-          .select("*")
-          .eq("id_user", user.id)
-          .order("created_at", { ascending: false });
+      const { data: userPosts, error: postsError } = await supabase
+        .from("posts")
+        .select("*, comment_count, like_count") // pastikan dua kolom ini ikut dipanggil
+        .eq("id_user", user.id)
+        .order("created_at", { ascending: false });
+
     
         if (postsError) throw postsError;
     
@@ -63,6 +65,7 @@ const ProfileUser = () => {
         setCommentsByPost(commentsMap);
     
         const totalLikes = postsData.reduce((sum, post) => sum + (post.like_count || 0), 0);
+
         const newBadge = getBadgeIcon(totalLikes);
     
         await supabase
@@ -88,15 +91,14 @@ const ProfileUser = () => {
   }, []);
 
   return (
-      <div className="bg-[#fdfdfd] text-black font-mono min-h-screen flex flex-col">
+    <div className="bg-[#fdfdfd] text-black font-mono min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 p-6 text-center">
-
         {userData ? (
           <div className="mb-6 bg-white border-[4px] border-black p-6 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] inline-block transition-transform duration-200 hover:scale-[1.02]">
-            <p className="text-lg">📛 <strong>Username:</strong> {userData.username}</p>
-            <p className="text-lg">📝 <strong>Bio:</strong> <span className="italic text-gray-700">{userData.bio}</span></p>
-            <p className="text-lg">🎖️ <strong>Badge:</strong> <span className="text-2xl">{userData.badge}</span></p>
+            <p className="text-lg text-left"><strong>Username:</strong> {userData.username}</p>
+            <p className="text-lg text-left"><strong>Kontribusi:</strong> <span className="italic text-gray-700">{getCommentBadgeLabel(userData.badge)}</span></p>
+            <p className="text-lg text-left"><strong>Popularitas:</strong> <span className="italic text-gray-700">{getBadgeLabel(userData.badge)}</span></p>
           </div>
         ) : (
           <p className="text-gray-600">Belum login atau data tidak ditemukan.</p>
@@ -105,7 +107,7 @@ const ProfileUser = () => {
         <div className="space-y-4">
           {posts.length > 0 ? (
             posts.map((post) => (
-                <div key={post.id} className="border-[4px] border-black bg-white p-4 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] text-left hover:-translate-y-1 transition-all duration-200">
+              <div key={post.id} className="border-[4px] border-black bg-white p-4 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] text-left hover:-translate-y-1 transition-all duration-200">
                 <p className="font-semibold">{post.content}</p>
                 <p className="text-sm text-gray-600 mt-2">
                   {new Date(post.created_at).toLocaleString('id-ID', {
@@ -121,7 +123,7 @@ const ProfileUser = () => {
                   {getBadgeIcon(post.like_count || 0)} {post.like_count || 0} like
                 </p>
                 <p className="text-sm text-blue-600">
-                  💬 {commentsByPost[post.id]?.length || 0} komentar
+                  {getCommentBadgeIcon(post.comment_count || 0)} {post.comment_count || 0} komentar
                 </p>
 
                 <button
@@ -131,30 +133,33 @@ const ProfileUser = () => {
                   {showComments[post.id] ? "🙈" : "💬"}
                 </button>
                 {showComments[post.id] && (
-                <div className="mt-4 space-y-2 bg-gray-100 p-3 border-[2px] border-black rounded">
-                  {commentsByPost[post.id]?.length > 0 ? (
-                    commentsByPost[post.id].map((comment, index) => (
-                      <div key={index} className="text-sm border-t border-black pt-2">
-                        {/* Tampilkan username dari komentator */}
-                        <strong>{comment.username}:</strong> {comment.content}
-                        <div className="text-xs text-gray-500">
-                          {new Date(comment.created_at).toLocaleString("id-ID", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour12: false,
-                          })}
+                  <div className="mt-4 space-y-2 bg-gray-100 p-3 border-[2px] border-black rounded">
+                    {commentsByPost[post.id]?.length > 0 ? (
+                      commentsByPost[post.id].map((comment, index) => (
+                        <div key={index} className="text-sm border-t border-black pt-2">
+                          {/* Tampilkan username dari komentator */}
+                          <strong>{comment.username}:</strong> {comment.content}
+                          <div className="text-xs text-gray-500">
+                            {new Date(comment.created_at).toLocaleString("id-ID", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour12: false,
+                            })}
+                          </div>
+                          {/* Menampilkan badge untuk komentar */}
+                          <span className="ml-2 text-xs text-blue-600">
+                            {getCommentBadgeLabel(comment.comment_count)}{" "}
+                          </span>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-500">Belum ada komentar.</p>
-                  )}
-                </div>
-              )}
-
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500">Belum ada komentar.</p>
+                    )}
+                  </div>
+                )}
               </div>
             ))
           ) : (
@@ -167,4 +172,4 @@ const ProfileUser = () => {
   );
 };
 
-export default ProfileUser;
+export default withAuth(ProfileUser);
