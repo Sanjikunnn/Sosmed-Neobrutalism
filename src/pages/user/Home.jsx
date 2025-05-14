@@ -4,6 +4,7 @@ import Footer from "../../components/Footer";
 import { supabase } from "../../utils/supabase";
 import Swal from 'sweetalert2';
 import { MAX_CHARACTERS, getBadgeIcon } from '../../components/Badge';
+import { getBadgeLabel, getCommentBadgeLabel } from '../../components/Badgee';
 import { useNavigate } from 'react-router-dom';
 import withAuth from "../../middleware/withAuth";
 
@@ -206,64 +207,91 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
   };
 
   return (
-    <div className="border-2 border-black bg-white p-4 rounded-lg shadow-md text-left mb-4">
-      <div className="font-bold text-lg">
-        {user.username} {getBadgeIcon(likes)}
-      </div>
-      <div className="my-2">{post.content}</div>
+<div className="border-2 border-black bg-white p-4 rounded-lg shadow-md text-left mb-4">
+  {/* Username dan Badge Icon */}
+  <div className="font-bold text-lg flex items-center">
+    <span>{user.username} <span className="text-sm">({getBadgeLabel(user.username)})</span></span>
+    
+  </div>
 
-      <div className="text-sm text-gray-600">
-        {new Date(post.created_at).toLocaleString('id-ID', {
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        })}
-      </div>
+  {/* Konten Postingan */}
+  <div className="my-2">{post.content}</div>
 
-      <div className="flex justify-between items-center mt-2">
-        <button 
-          className="text-sm py-1 px-2 rounded bg-blue-500 text-white"
-          onClick={() => handlePostLike(post.id)}
-        >
-          ❤️ {likes}
-        </button>
-        <button 
-          className="text-sm py-1 px-2 rounded bg-green-500 text-white"
-          onClick={toggleComments}
-        >
-          💬 {comments.length}
-        </button>
-      </div>
+  {/* Tanggal postingan */}
+  <div className="text-sm text-gray-600">
+    {new Date(post.created_at).toLocaleString('id-ID', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })}
+  </div>
 
-      {showComments && (
-        <div className="mt-4 space-y-2">
-          {comments.map((comment, index) => (
-            <div key={index} className="text-sm border-t pt-2">
-              <strong>{comment.users?.username || 'Anonim'}</strong>: {comment.content}
+  {/* Tombol Like dan Komentar */}
+  <div className="flex justify-between items-center mt-2">
+    <button 
+      className="text-sm py-1 px-2 rounded bg-blue-500 text-white"
+      onClick={() => handlePostLike(post.id)}
+    >
+      ❤️ {likes}
+    </button>
+
+    <button 
+      className="text-sm py-1 px-2 rounded bg-green-500 text-white"
+      onClick={toggleComments}
+    >
+      💬 {comments.length}
+    </button>
+  </div>
+
+  {/* Menampilkan komentar jika aktif */}
+  {showComments && (
+    <div className="mt-4 space-y-2">
+      {comments.map((comment, index) => (
+        <div key={index} className="text-sm border-t pt-2">
+          <strong>{comment.users?.username || 'Anonim'}</strong> 
+          {/* Menampilkan badge untuk komentar */}
+            <span className="ml-2 text-xs text-blue-600">
+              {getCommentBadgeLabel(comment.comment_count)}{" "}
+             </span>
+          <div className="text-sm mb-2">
+             {comment.content}
+          </div>
+          <div className="text-xs text-gray-500">
+            {new Date(comment.created_at).toLocaleString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour12: false,
+            })}
             </div>
-          ))}
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleCommentSubmit(post.id, newComment);
-              setNewComment("");
-            }}
-            className="mt-2"
-          >
-            <input
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Tulis komentar..."
-              className="w-full border-2 border-gray-300 px-4 py-2 rounded-md"
-            />
-          </form>
         </div>
-      )}
+      ))}
+
+      {/* Formulir untuk menambah komentar */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleCommentSubmit(post.id, newComment);
+          setNewComment("");
+        }}
+        className="mt-2"
+      >
+        <input
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Tulis komentar..."
+          className="w-full border-2 border-gray-300 px-4 py-2 rounded-md"
+        />
+      </form>
     </div>
+  )}
+</div>
+
   );
 };
 
