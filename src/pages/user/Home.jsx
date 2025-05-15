@@ -196,9 +196,9 @@ if (loading)
           <div className="text-right text-sm text-gray-500 mt-1">{MAX_CHARACTERS - newPost.length} karakter tersisa</div>
           <button
             onClick={handlePostSubmit}
-            className="mt-2 bg-pink-500 text-white px-6 py-2 rounded-full hover:bg-pink-600 transition"
+            className="mt-2 bg-pink-500 text-white px-6 py-2 rounded-full hover:bg-pink-600 hover:text-black transition"
           >
-            + Kirim Postingan
+            + Bagikan
           </button>
         </div>
 

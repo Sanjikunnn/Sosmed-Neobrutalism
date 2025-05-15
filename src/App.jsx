@@ -3,6 +3,9 @@ import { FaPlus, FaRegCommentDots, FaUserFriends, FaCompass, FaBell, FaHashtag }
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+import PrivacyPolicy from './pages/privacyPolicy';
+import TermsCondition from './pages/termsCondition';
+
 import UserHome from './pages/user/Home';
 import UserPost from './pages/user/Post';
 import UserProfile from './pages/user/Profile';
@@ -17,6 +20,9 @@ function App() {
         {/* Routing for Auth pages */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsCondition />} />
 
 
           {/* Routing for User */}
