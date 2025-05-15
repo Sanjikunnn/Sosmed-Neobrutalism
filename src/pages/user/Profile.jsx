@@ -130,32 +130,28 @@ const ProfileUser = () => {
 
     fetchProfileData();
   }, []);
-if (loading)
+
+  const PostSkeleton = () => (
+  <div className="bg-white border-4 border-black p-4 rounded-xl mb-5 shadow-[4px_4px_0px_rgba(0,0,0,1)] animate-pulse space-y-2">
+    <div className="h-4 bg-gray-300 rounded w-1/4" />
+    <div className="h-4 bg-gray-300 rounded w-full" />
+    <div className="h-4 bg-gray-200 rounded w-5/6" />
+    <div className="h-3 bg-gray-200 rounded w-1/3" />
+    <div className="flex gap-4 mt-2">
+      <div className="h-4 w-20 bg-blue-200 rounded-full" />
+      <div className="h-4 w-24 bg-blue-200 rounded-full" />
+    </div>
+    <div className="h-8 w-32 bg-yellow-300 rounded-md border-[3px] border-black shadow-[2px_2px_0px_black]" />
+  </div>
+);
+
+
+if (loading || !authUser)
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="flex flex-col items-center">
-        <svg
-          className="animate-spin h-10 w-10 text-pink-500 mb-2"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          ></circle>
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v8z"
-          ></path>
-        </svg>
-        <p className="text-pink-600">Memuat Data...</p>
-      </div>
+    <div className="flex flex-col gap-4 p-4 max-w-2xl mx-auto">
+      {[...Array(3)].map((_, idx) => (
+        <PostSkeleton key={idx} />
+      ))}
     </div>
   );
 

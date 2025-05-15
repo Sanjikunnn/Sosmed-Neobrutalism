@@ -10,6 +10,7 @@ import {
 } from "../../components/Badge";
 import { useNavigate } from 'react-router-dom';
 import withAuth from "../../middleware/withAuth";
+import { Star, Heart, MessageCircle, Loader2, PlusCircle } from 'lucide-react';
 
 const UserHome = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -21,58 +22,60 @@ const UserHome = () => {
   const [loading, setLoading] = useState(true);
 
 
+// Bagian fetchData di useEffect UserHome
 useEffect(() => {
   const fetchData = async () => {
-    const { data: postData } = await supabase
-      .from('posts')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      setLoading(true);
 
-    const { data: userData } = await supabase
-      .from('users')
-      .select('id, username, badge');
+      const [{ data: postData }, { data: userData }, { data: { user } }] = await Promise.all([
+        supabase.from('posts').select('*').order('created_at', { ascending: false }),
+        supabase.from('users').select('id, username, badge'),
+        supabase.auth.getUser(),
+      ]);
 
-    const { data: { user } } = await supabase.auth.getUser();
-
-    setPosts(postData || []);
-    setUsers(userData || []);
-    setCurrentUser(user || null);
-    setLoading(false); // ⬅️ Tambahkan ini biar loading hilang setelah semua data selesai
+      setPosts(postData || []);
+      setUsers(userData || []);
+      setCurrentUser(user || null);
+    } catch (error) {
+      Swal.fire({ icon: 'error', title: 'Gagal memuat data, coba lagi ya!' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   fetchData();
-}, [refresh, navigate]);
+}, [refresh]);
+
+// Handle submit post dengan disable button saat loading
+const [posting, setPosting] = useState(false);
+
+const handlePostSubmit = async (e) => {
+  e.preventDefault();
+  const trimmedPost = newPost.trim();
+
+  if (!currentUser) return Swal.fire({ icon: 'error', title: 'Login dahulu ya!' });
+  if (trimmedPost === "") return Swal.fire({ icon: 'error', title: 'Isi postingan tidak boleh kosong!' });
+
+  try {
+    setPosting(true);
+    const { error } = await supabase.from('posts').insert([{ content: trimmedPost, id_user: currentUser.id, created_at: new Date() }]);
+
+    if (error) throw error;
+
+    setNewPost("");
+    setRefresh((prev) => !prev);
+    Swal.fire({ icon: 'success', title: 'Postingan berhasil!' });
+  } catch {
+    Swal.fire({ icon: 'error', title: 'Gagal kirim postingan' });
+  } finally {
+    setPosting(false);
+  }
+};
 
   const handlePostChange = (e) => {
     if (e.target.value.length <= MAX_CHARACTERS) {
       setNewPost(e.target.value);
-    }
-  };
-
-  const handlePostSubmit = async (e) => {
-    e.preventDefault();
-    const trimmedPost = newPost.trim();
-
-    if (!currentUser) {
-      Swal.fire({ icon: 'error', title: 'Login dahulu ya!' });
-      return;
-    }
-
-    if (trimmedPost === "") {
-      Swal.fire({ icon: 'error', title: 'Isi postingan tidak boleh kosong!' });
-      return;
-    }
-
-    const { error } = await supabase
-      .from('posts')
-      .insert([{ content: trimmedPost, id_user: currentUser.id, created_at: new Date() }]);
-
-    if (error) {
-      Swal.fire({ icon: 'error', title: 'Gagal kirim postingan' });
-    } else {
-      setNewPost("");
-      setRefresh(!refresh);
-      Swal.fire({ icon: 'success', title: 'Postingan berhasil!' });
     }
   };
 
@@ -148,43 +151,50 @@ useEffect(() => {
     return users.find(u => u.id === userId) || { username: 'User', badge: '❓' };
   };
 
-if (loading)
+  const PostSkeleton = () => (
+  <div className="bg-white border-4 border-black p-4 rounded-xl mb-5 shadow-[4px_4px_0px_rgba(0,0,0,1)] animate-pulse space-y-2">
+    <div className="h-4 bg-gray-300 rounded w-1/4" />
+    <div className="h-4 bg-gray-300 rounded w-full" />
+    <div className="h-4 bg-gray-200 rounded w-5/6" />
+    <div className="h-3 bg-gray-200 rounded w-1/3" />
+    <div className="flex gap-4 mt-2">
+      <div className="h-4 w-20 bg-blue-200 rounded-full" />
+      <div className="h-4 w-24 bg-blue-200 rounded-full" />
+    </div>
+    <div className="h-8 w-32 bg-yellow-300 rounded-md border-[3px] border-black shadow-[2px_2px_0px_black]" />
+  </div>
+);
+
+
+if (loading || !currentUser)
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="flex flex-col items-center">
-        <svg
-          className="animate-spin h-10 w-10 text-pink-500 mb-2"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          ></circle>
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v8z"
-          ></path>
-        </svg>
-        <p className="text-pink-600">Memuat Data...</p>
-      </div>
+    <div className="flex flex-col gap-4 p-4 max-w-2xl mx-auto">
+      {[...Array(3)].map((_, idx) => (
+        <PostSkeleton key={idx} />
+      ))}
     </div>
   );
-
 
   return (
     <div className="bg-gradient-to-b from-pink-100 to-white text-black font-sans min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 p-4 max-w-2xl mx-auto">
         <div className="bg-white shadow-lg p-6 rounded-lg mb-6">
-        <h1 className="text-2xl font-semibold mb-2">Halo, {findUserData(currentUser?.id).username} 👋</h1>
-          <p className="text-sm text-gray-600 mb-4">Bagikan pikiranmu hari ini:</p>
+        <h1 className="text-2xl font-semibold mb-2 flex justify-between items-center">
+          <span>Halo, {findUserData(currentUser?.id).username} 👋</span>
+          <span className="text-sm text-pink-500 flex items-center gap-1">
+            <Star size={16} />
+            {getBadgeLabel(findUserData(currentUser?.id).badge)}
+          </span>
+        </h1>
+
+
+        <p className="text-sm text-gray-600 mb-4">Bagikan pikiranmu hari ini</p>
+
+        {/* Statistik */}
+        <div className="text-sm text-gray-600">
+          Total Postingan Anda: <strong>{posts.length}</strong>
+        </div>
 
           <textarea
             value={newPost}
@@ -196,9 +206,13 @@ if (loading)
           <div className="text-right text-sm text-gray-500 mt-1">{MAX_CHARACTERS - newPost.length} karakter tersisa</div>
           <button
             onClick={handlePostSubmit}
-            className="mt-2 bg-pink-500 text-white px-6 py-2 rounded-full hover:bg-pink-600 hover:text-black transition"
+            disabled={posting}
+            className={`flex items-center text-sm gap-1 px-2 rounded text-white ${
+              posting ? "bg-blue-200" : "bg-blue-400 hover:bg-blue-600"
+            }`}
           >
-            + Bagikan
+            <PlusCircle size={20} />
+            {posting ? 'Mengirim...' : 'Bagikan'}
           </button>
         </div>
 
@@ -246,8 +260,11 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
     <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
       <div className="flex justify-between items-center mb-2">
         <div className="font-semibold text-lg">{user.username}</div>
-        <div className="text-sm text-pink-500">{getBadgeLabel(user.username)}</div>
-      </div>
+          <div className="text-sm text-pink-500 flex items-center gap-1">
+            <Star size={14} />
+            {getBadgeLabel(user.username)}
+          </div>      
+        </div>
 
       <div className="mb-2 text-gray-800 whitespace-pre-line">{post.content}</div>
 
@@ -261,17 +278,23 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
           year: 'numeric',
         })}
       </div>
-
       <div className="flex gap-3 items-center">
         <button
-          className="text-sm px-3 py-1 rounded-full bg-red-100 text-red-500 hover:bg-red-200 hover:text-red-600"
+          className="flex items-center gap-1 text-sm px-3 py-1 rounded-full bg-red-100 text-red-500 hover:bg-red-200 hover:text-red-600"
           onClick={() => handlePostLike(post.id)}
-        >❤️ {likes}</button>
+        >
+          <Heart size={16} />
+          <span>{likes}</span>
+        </button>
         <button
-          className="text-sm px-3 py-1 rounded-full bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700"
+          className="flex items-center gap-1 text-sm px-3 py-1 rounded-full bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700"
           onClick={toggleComments}
-        >💬 {comments.length}</button>
+        >
+          <MessageCircle size={16} />
+          <span>{comments.length}</span>
+        </button>
       </div>
+
 
       {showComments && (
         <div className="mt-4 space-y-2">
