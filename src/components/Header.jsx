@@ -64,19 +64,19 @@ export default function Header() {
         <nav className="hidden md:flex space-x-4">
           <Link
             to="/user/home"
-            className="bg-white text-black text-sm font-extrabold px-4 py-2 border-4 border-black shadow-[4px_4px_0px_#000] hover:bg-pink-400 hover:text-white hover:shadow-[6px_6px_0px_#000] transition-all duration-200 active:scale-95"
+            className="bg-white text-black text-sm font-extrabold px-4 py-2 border-4 border-black shadow-[4px_4px_0px_#000] hover:bg-pink-400 hover:text-black hover:shadow-[6px_6px_0px_#000] transition-all duration-200 active:scale-95"
           >
             🏠 Home
           </Link>
           <Link
             to="/user/profile"
-            className="bg-white text-black text-sm font-extrabold px-4 py-2 border-4 border-black shadow-[4px_4px_0px_#000] hover:bg-pink-400 hover:text-white hover:shadow-[6px_6px_0px_#000] transition-all duration-200 active:scale-95"
+            className="bg-white text-black text-sm font-extrabold px-4 py-2 border-4 border-black shadow-[4px_4px_0px_#000] hover:bg-pink-400 hover:text-black hover:shadow-[6px_6px_0px_#000] transition-all duration-200 active:scale-95"
           >
             🙍‍♂️ Profile
           </Link>
           <button
             onClick={handleLogout}
-            className="bg-white text-black text-sm font-extrabold px-4 py-2 border-4 border-black shadow-[4px_4px_0px_#000] hover:bg-red-500 hover:text-white hover:shadow-[6px_6px_0px_#000] transition-all duration-200 active:scale-95"
+            className="bg-white text-black text-sm font-extrabold px-4 py-2 border-4 border-black shadow-[4px_4px_0px_#000] hover:bg-red-500 hover:text-black hover:shadow-[6px_6px_0px_#000] transition-all duration-200 active:scale-95"
           >
             🔓 Logout
           </button>
@@ -88,14 +88,14 @@ export default function Header() {
         <div className="mt-4 flex flex-col space-y-2 md:hidden">
           <Link
             to="/user/home"
-            className="bg-white text-black font-extrabold px-4 py-2 border-4 border-black shadow-[3px_3px_0px_#000] hover:bg-pink-400 hover:text-white"
+            className="bg-white text-black font-extrabold px-4 py-2 border-4 border-black shadow-[3px_3px_0px_#000] hover:bg-pink-400 hover:text-black"
             onClick={() => setMenuOpen(false)}
           >
             🏠 Home
           </Link>
           <Link
             to="/user/profile"
-            className="bg-white text-black font-extrabold px-4 py-2 border-4 border-black shadow-[3px_3px_0px_#000] hover:bg-pink-400 hover:text-white"
+            className="bg-white text-black font-extrabold px-4 py-2 border-4 border-black shadow-[3px_3px_0px_#000] hover:bg-pink-400 hover:text-black"
             onClick={() => setMenuOpen(false)}
           >
             🙍‍♂️ Profile
@@ -105,7 +105,7 @@ export default function Header() {
               setMenuOpen(false);
               handleLogout();
             }}
-            className="bg-white text-black font-extrabold px-4 py-2 border-4 border-black shadow-[3px_3px_0px_#000] hover:bg-red-500 hover:text-white"
+            className="bg-white text-black font-extrabold px-4 py-2 border-4 border-black shadow-[3px_3px_0px_#000] hover:bg-red-500 hover:text-black"
           >
             🔓 Logout
           </button>
