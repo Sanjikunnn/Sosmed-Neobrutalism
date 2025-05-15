@@ -31,6 +31,6 @@ export const getCommentBadgeLabel = (commentCount) => {
   if (commentCount >= 100) return '🏆Komentator Terbaik';
   if (commentCount >= 50) return '👥Pemimpin Diskusi';
   if (commentCount >= 20) return '🗣️Pembicara';
-  if (commentCount >= 10) return '👀Pengamat';
+  if (commentCount >= 5) return '👀Pengamat';
   return '🌱Pendatang Baru';
 };

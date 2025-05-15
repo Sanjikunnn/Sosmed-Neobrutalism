@@ -259,7 +259,9 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
   return (
     <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
       <div className="flex justify-between items-center mb-2">
-        <div className="font-semibold text-lg">{user.username}</div>
+        <div className="font-semibold text-lg">
+          <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.username}`} className="w-6 h-6 rounded-full inline-block mr-2" />
+          {user.username}</div>
           <div className="text-sm text-pink-500 flex items-center gap-1">
             <Star size={14} />
             {getBadgeLabel(user.username)}
@@ -300,7 +302,9 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
         <div className="mt-4 space-y-2">
           {comments.map((comment, index) => (
             <div key={index} className="text-sm border-t pt-2">
-              <strong>{comment.users?.username || 'Anonim'}</strong> 
+              <strong>
+                <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${comment.users?.username}`} className="w-5 h-5 rounded-full inline-block mr-1" />
+                {comment.users?.username || 'Anonim'}</strong> 
               <span className="ml-2 text-xs text-blue-600">
                 {getCommentBadgeLabel(comment.comment_count)}
               </span>
