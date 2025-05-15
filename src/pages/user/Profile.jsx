@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { supabase } from "../../utils/supabase";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import {
   getBadgeIcon,
-  getCommentBadgeIcon,
   getBadgeLabel,
   getCommentBadgeLabel,
 } from "../../components/Badge";
 import withAuth from "../../middleware/withAuth";
+import { 
+  Heart, MessageSquare, User, Calendar, ChevronDown, ChevronUp, 
+  Mail, Trophy, Star, Smile, Frown, Meh, ArrowRight, Lock 
+} from "lucide-react";
 
 const ProfileUser = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -19,131 +22,180 @@ const ProfileUser = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const toggleComments = (postId) => {
+  const toggleComments = useCallback((postId) => {
     setShowComments((prev) => ({
       ...prev,
       [postId]: !prev[postId],
     }));
-  };
+  }, []);
 
   // Fetch current authenticated user
   const fetchAuthUser = async () => {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-    if (error) throw error;
-    return user;
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      return user;
+    } catch (err) {
+      console.error("Error fetching auth user:", err);
+      return null;
+    }
   };
 
   // Fetch posts by user with like & comment count + username
   const fetchUserPosts = async (userId) => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*, like_count, comment_count, users(username)")
-      .eq("id_user", userId)
-      .order("created_at", { ascending: false });
-    if (error) throw error;
-    return data || [];
+    try {
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*, like_count, comment_count, users(username)")
+        .eq("id_user", userId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    } catch (err) {
+      console.error("Error fetching user posts:", err);
+      throw new Error("Gagal memuat postingan pengguna");
+    }
   };
 
   // Fetch all comments for given post IDs + commenters username
   const fetchCommentsByPosts = async (postIds) => {
-    if (postIds.length === 0) return {};
+    if (!postIds || postIds.length === 0) return {};
 
-    const { data: allComments, error: commentsError } = await supabase
-      .from("comments")
-      .select("content, created_at, id_user, post_id")
-      .in("post_id", postIds)
-      .order("created_at", { ascending: true });
+    try {
+      const { data: allComments, error: commentsError } = await supabase
+        .from("comments")
+        .select("content, created_at, id_user, post_id")
+        .in("post_id", postIds)
+        .order("created_at", { ascending: true });
 
-    if (commentsError) throw commentsError;
+      if (commentsError) throw commentsError;
+      if (!allComments || allComments.length === 0) return {};
 
-    if (!allComments || allComments.length === 0) return {};
+      const commenterIds = [
+        ...new Set(allComments.map((c) => c.id_user).filter(Boolean)),
+      ];
 
-    const commenterIds = [
-      ...new Set(allComments.map((c) => c.id_user).filter(Boolean)),
-    ];
+      const { data: commenters, error: commentersError } = await supabase
+        .from("users")
+        .select("id, username")
+        .in("id", commenterIds);
 
-    const { data: commenters, error: commentersError } = await supabase
-      .from("users")
-      .select("id, username")
-      .in("id", commenterIds);
+      if (commentersError) throw commentersError;
 
-    if (commentersError) throw commentersError;
+      const userIdToUsername = {};
+      commenters.forEach((u) => {
+        userIdToUsername[u.id] = u.username;
+      });
 
-    const userIdToUsername = Object.fromEntries(
-      commenters.map((u) => [u.id, u.username])
-    );
-
-    return allComments.reduce((acc, comment) => {
-      const username = userIdToUsername[comment.id_user] || "Anonim";
-      acc[comment.post_id] = acc[comment.post_id] || [];
-      acc[comment.post_id].push({ ...comment, username });
-      return acc;
-    }, {});
+      return allComments.reduce((acc, comment) => {
+        const username = userIdToUsername[comment.id_user] || "Anonim";
+        acc[comment.post_id] = acc[comment.post_id] || [];
+        acc[comment.post_id].push({ ...comment, username });
+        return acc;
+      }, {});
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+      throw new Error("Gagal memuat komentar");
+    }
   };
 
-  // Update badge based on total likes
-  const updateUserBadge = async (userId, totalLikes) => {
-    const newBadge = getBadgeIcon(totalLikes);
-    const { error } = await supabase
-      .from("users")
-      .update({ badge: newBadge })
-      .eq("id", userId);
-    if (error) throw error;
-    return newBadge;
+  // Update badge based on total likes and comments
+  const updateUserBadge = async (userId, totalLikes, totalComments) => {
+    try {
+      const newBadge = getBadgeIcon(totalLikes);
+      const { error } = await supabase
+        .from("users")
+        .update({ 
+          badge: newBadge,
+        })
+        .eq("id", userId);
+      if (error) throw error;
+      return newBadge;
+    } catch (err) {
+      console.error("Error updating badge:", err);
+      throw new Error("Gagal memperbarui badge");
+    }
   };
 
   // Fetch user profile data (username, bio, badge)
   const fetchUserProfile = async (userId) => {
-    const { data, error } = await supabase
-      .from("users")
-      .select("username, bio, badge")
-      .eq("id", userId)
-      .maybeSingle();
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("username, bio, badge")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return data || {};
+    } catch (err) {
+      console.error("Error fetching user profile:", err);
+      throw new Error("Gagal memuat profil pengguna");
+    }
   };
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadData = async () => {
       setLoading(true);
       setError(null);
+      
       try {
         const user = await fetchAuthUser();
+        if (!isMounted) return;
+        
         if (!user) {
           setAuthUser(null);
           setLoading(false);
           return;
         }
+        
         setAuthUser(user);
 
-        const userPosts = await fetchUserPosts(user.id);
+        const [userPosts, profile] = await Promise.all([
+          fetchUserPosts(user.id),
+          fetchUserProfile(user.id)
+        ]);
+
+        if (!isMounted) return;
+
         setPosts(userPosts);
+        setUserData(profile);
 
         const commentsMap = await fetchCommentsByPosts(
           userPosts.map((p) => p.id)
         );
+        
+        if (!isMounted) return;
         setCommentsByPost(commentsMap);
 
         const totalLikes = userPosts.reduce(
           (sum, post) => sum + (post.like_count || 0),
           0
         );
-        await updateUserBadge(user.id, totalLikes);
+        
+        const totalComments = userPosts.reduce(
+          (sum, post) => sum + (post.comment_count || 0),
+          0
+        );
 
-        const profile = await fetchUserProfile(user.id);
-        setUserData(profile);
+        await updateUserBadge(user.id, totalLikes, totalComments);
       } catch (err) {
-        console.error("Terjadi error saat mengambil data profil:", err);
-        setError("Gagal memuat data profil.");
+        if (!isMounted) return;
+        console.error("Error loading profile data:", err);
+        setError(err.message || "Gagal memuat data profil.");
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const PostSkeleton = () => (
@@ -160,7 +212,7 @@ const ProfileUser = () => {
     </div>
   );
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex flex-col gap-4 p-4 max-w-2xl mx-auto">
         {[...Array(3)].map((_, idx) => (
@@ -168,127 +220,206 @@ const ProfileUser = () => {
         ))}
       </div>
     );
+  }
 
-  if (!authUser)
+  if (!authUser) {
     return (
-      <div className="flex flex-col gap-4 p-4 max-w-2xl mx-auto text-center text-gray-600">
-        <p>Kamu belum login. Silakan login dulu ya.</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 p-4 max-w-2xl mx-auto text-center">
+        <Lock className="w-12 h-12 text-pink-500" />
+        <p className="text-lg text-gray-600">Kamu belum login. Silakan login dulu ya.</p>
       </div>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
-      <div className="flex flex-col gap-4 p-4 max-w-2xl mx-auto text-center text-red-600">
-        <p>{error}</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 p-4 max-w-2xl mx-auto text-center">
+        <Frown className="w-12 h-12 text-red-500" />
+        <p className="text-lg text-red-600">{error}</p>
       </div>
     );
+  }
+
+  const totalLikes = posts.reduce((acc, post) => acc + (post.like_count || 0), 0);
+  const totalComments = posts.reduce((acc, post) => acc + (post.comment_count || 0), 0);
+
+  // Fungsi untuk mendapatkan ikon badge berdasarkan jumlah like
+  const getBadgeIconComponent = (likes) => {
+    if (likes >= 100) return <Trophy className="w-5 h-5 text-yellow-500" />;
+    if (likes >= 50) return <Star className="w-5 h-5 text-purple-500" />;
+    if (likes >= 10) return <Heart className="w-5 h-5 text-pink-500" />;
+    return <Smile className="w-5 h-5 text-blue-500" />;
+  };
+
+  // Fungsi untuk mendapatkan ikon badge komentar
+  const getCommentBadgeIconComponent = (comments) => {
+    if (comments >= 50) return <MessageSquare className="w-5 h-5 text-green-600" />;
+    if (comments >= 20) return <MessageSquare className="w-5 h-5 text-blue-600" />;
+    return <MessageSquare className="w-5 h-5 text-gray-600" />;
+  };
 
   return (
     <div className="min-h-screen bg-[#FFF3F7] text-black flex flex-col font-sans">
       <Header />
 
-      <main className="flex-1 max-w-4xl mx-auto p-6">
+      <main className="flex-1 max-w-4xl mx-auto p-6 w-full">
         {userData && (
-          <section className="bg-white border-4 border-black p-5 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] mb-6 text-left">
-            <h2 className="text-2xl font-bold mb-2">👤 Profil Kamu</h2>
-            <p>
-              <strong>Username:</strong> {userData.username}
-            </p>
+          <section className="bg-white border-4 border-black p-6 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] mb-8">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="bg-pink-100 p-3 rounded-full border-2 border-black">
+                <User className="w-8 h-8 text-pink-600" />
+              </div>
+              <h2 className="text-2xl font-bold">Profil Kamu</h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold min-w-[100px]">Username:</span>
+                <span className="flex-1 bg-pink-50 px-3 py-1 rounded-md border border-pink-200">
+                  {userData.username || 'Tidak tersedia'}
+                </span>
+              </div>
 
-            <p className="relative group inline-block cursor-default">
-              <strong>Kontribusi:</strong>{" "}
-              <span className="italic text-gray-700">
-                {getCommentBadgeLabel(posts.reduce((acc, post) => acc + (post.comment_count || 0), 0))}
-              </span>
-              <span className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
-                Total komentar seluruh postingan kamu:{" "}
-                {posts.reduce((acc, post) => acc + (post.comment_count || 0), 0)}
-                <br />
-                Status: {getCommentBadgeLabel(userData.badge)}
-              </span>
-            </p>
+              <div className="relative group flex items-center gap-2">
+                <span className="font-semibold min-w-[100px]">Kontribusi:</span>
+                <span className="flex items-center gap-2 flex-1 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
+                  {getCommentBadgeIconComponent(totalComments)}
+                  <span className="italic text-gray-700">
+                    {getCommentBadgeLabel(totalComments)}
+                  </span>
+                </span>
+                <span className="absolute left-full ml-2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
+                  Total komentar: {totalComments}
+                  <br />
+                  Status: {getCommentBadgeLabel(totalComments)}
+                </span>
+              </div>
 
-            <br />
-
-            <p className="relative group inline-block cursor-default">
-              <strong>Popularitas:</strong>{" "}
-              <span className="italic text-gray-700">
-                {getBadgeLabel(posts.reduce((acc, post) => acc + (post.like_count || 0), 0))}
-              </span>
-              <span className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
-                Total like seluruh postingan kamu:{" "}
-                {posts.reduce((acc, post) => acc + (post.like_count || 0), 0)}
-                <br />
-                Status: {getBadgeLabel(userData.badge)}
-              </span>
-            </p>
+              <div className="relative group flex items-center gap-2">
+                <span className="font-semibold min-w-[100px]">Popularitas:</span>
+                <span className="flex items-center gap-2 flex-1 bg-yellow-50 px-3 py-1 rounded-md border border-yellow-200">
+                  {getBadgeIconComponent(totalLikes)}
+                  <span className="italic text-gray-700">
+                    {getBadgeLabel(totalLikes)}
+                  </span>
+                </span>
+                <span className="absolute left-full ml-2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
+                  Total like: {totalLikes}
+                  <br />
+                  Status: {getBadgeLabel(totalLikes)}
+                </span>
+              </div>
+            </div>
           </section>
         )}
 
-        <h3 className="text-xl font-bold mb-4">📬 Postingan Kamu</h3>
+        <div className="flex items-center gap-3 mb-6">
+          <Mail className="w-6 h-6 text-pink-600" />
+          <h3 className="text-2xl font-bold">Postingan Kamu</h3>
+        </div>
+
         {posts.length > 0 ? (
-          posts.map((post) => (
-            <article
-              key={post.id}
-              className="bg-white border-4 border-black p-4 rounded-xl mb-5 shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:scale-[1.01] transition-transform"
-            >
-              <div className="mb-2">
-                <span className="font-semibold">
-                  <img
-                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${post.users?.username}`}
-                    className="w-6 h-6 rounded-full inline-block mr-2"
-                    alt="avatar"
-                  />
-                  {post.users?.username}
-                </span>
-                <span className="text-sm text-gray-600 ml-2">
-                  {new Date(post.created_at).toLocaleDateString()}
-                </span>
-              </div>
+          <div className="space-y-6">
+            {posts.map((post) => (
+              <article
+                key={post.id}
+                className="bg-white border-4 border-black p-5 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] transition-all duration-200"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={`https://api.dicebear.com/7.x/initials/svg?seed=${post.users?.username || 'User'}`}
+                      className="w-8 h-8 rounded-full border-2 border-black"
+                      alt="avatar"
+                    />
+                    <span className="font-semibold">
+                      {post.users?.username || 'Anonim'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-gray-600">
+                    <Calendar className="w-4 h-4" />
+                    <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
 
-              <p className="mb-4 whitespace-pre-wrap">{post.content}</p>
+                <p className="mb-5 whitespace-pre-wrap text-gray-800">{post.content}</p>
 
-              <div className="flex items-center gap-4 mb-3">
-                <span className="flex items-center gap-1 text-gray-600">
-                  {getBadgeIcon(post.like_count)}
-                  {post.like_count || 0} Like
-                </span>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-1 text-gray-600">
+                      <Heart className="w-5 h-5 text-pink-500" />
+                      <span>{post.like_count || 0}</span>
+                    </span>
 
-                <span className="flex items-center gap-1 text-gray-600">
-                  {getCommentBadgeIcon(post.comment_count)}
-                  {post.comment_count || 0} Komentar
-                </span>
+                    <span className="flex items-center gap-1 text-gray-600">
+                      <MessageSquare className="w-5 h-5 text-blue-500" />
+                      <span>{post.comment_count || 0}</span>
+                    </span>
+                  </div>
 
-                <button
-                  onClick={() => toggleComments(post.id)}
-                  className="flex text-xs text-blue-700 underline-offset-2 hover:underline p-1 cursor-pointer"
-                >
-                  {showComments[post.id] ? "Tutup Komentar" : "Lihat Komentar"}
-                </button>
-              </div>
+                  <button
+                    onClick={() => toggleComments(post.id)}
+                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    {showComments[post.id] ? (
+                      <>
+                        <ChevronUp className="w-4 h-4" />
+                        Sembunyikan
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4" />
+                        Lihat Komentar
+                      </>
+                    )}
+                  </button>
+                </div>
 
-              {showComments[post.id] && (
-                <section className="bg-[#FFE6F1] p-3 rounded-lg max-h-48 overflow-y-auto border-2 border-pink-500">
-                  {(commentsByPost[post.id] && commentsByPost[post.id].length > 0) ? (
-                    commentsByPost[post.id].map((comment, idx) => (
-                      <div
-                        key={`${comment.created_at}-${idx}`}
-                        className="mb-2 border-b border-gray-300 pb-2 last:border-none"
-                      >
-                        <p className="text-sm text-gray-700 font-semibold">
-                          {comment.username}: <span className="text-xs">{comment.content}</span>
-                        </p>
+                {showComments[post.id] && (
+                  <section className="mt-4 bg-[#FFE6F1] p-4 rounded-lg border-2 border-pink-300 max-h-60 overflow-y-auto">
+                    {(commentsByPost[post.id]?.length > 0) ? (
+                      <div className="space-y-3">
+                        {commentsByPost[post.id].map((comment, idx) => (
+                          <div
+                            key={`${comment.created_at}-${idx}`}
+                            className="pb-2 border-b border-pink-200 last:border-none"
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <img
+                                src={`https://api.dicebear.com/7.x/initials/svg?seed=${comment.username}`}
+                                className="w-5 h-5 rounded-full"
+                                alt="avatar"
+                              />
+                              <span className="text-sm font-semibold text-gray-700">
+                                {comment.username}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {new Date(comment.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-800 pl-7">{comment.content}</p>
+                          </div>
+                        ))}
                       </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 italic text-sm">Belum ada komentar.</p>
-                  )}
-                </section>
-              )}
-            </article>
-          ))
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-4 text-gray-500">
+                        <MessageSquare className="w-8 h-8 mb-2 text-gray-400" />
+                        <p className="italic">Belum ada komentar</p>
+                      </div>
+                    )}
+                  </section>
+                )}
+              </article>
+            ))}
+          </div>
         ) : (
-          <p>Kamu belum memiliki postingan.</p>
+          <div className="flex flex-col items-center justify-center py-12 bg-white border-4 border-black rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+            <Mail className="w-12 h-12 mb-4 text-gray-400" />
+            <p className="text-lg text-gray-600 mb-4">Kamu belum memiliki postingan</p>
+            <button className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors">
+              Buat Postingan Pertamamu <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         )}
       </main>
 
