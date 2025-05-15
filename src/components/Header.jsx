@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from "../utils/supabase";
 import Swal from 'sweetalert2';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrollDir, setScrollDir] = useState('up'); // track arah scroll
+  const [lastScrollY, setLastScrollY] = useState(0);
   const navigate = useNavigate();
 
+  // Handle logout
   const handleLogout = async () => {
     await supabase.auth.signOut();
     Swal.fire({
@@ -17,8 +20,32 @@ export default function Header() {
     });
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        // scroll ke bawah
+        setScrollDir('down');
+      } else if (currentScrollY < lastScrollY) {
+        // scroll ke atas
+        setScrollDir('up');
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <header className="p-4 bg-[#fff200] border-b-[6px] border-black shadow-[6px_6px_0px_#000]">
+    <header
+      className={`
+        sticky top-0 z-50 p-4 bg-[#fff200] border-b-[3px] border-black shadow-[6px_6px_0px_#000] 
+        transform transition-transform duration-300
+        ${scrollDir === 'down' ? '-translate-y-full' : 'translate-y-0'}
+      `}
+    >
       <div className="flex justify-between items-center">
         <h1 className="text-lg font-extrabold tracking-widest text-black underline underline-offset-4 decoration-pink-600 drop-shadow-[4px_4px_0px_white]">
           🚀 Sosmed-Neobrutalism
@@ -26,8 +53,9 @@ export default function Header() {
 
         {/* Hamburger untuk mobile */}
         <button
-          className="md:hidden text-black text-2xl"
+          className="md:hidden text-black text-sm"
           onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
         >
           ☰
         </button>
