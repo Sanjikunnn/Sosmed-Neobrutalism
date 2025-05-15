@@ -130,7 +130,6 @@ const ProfileUser = () => {
 
     fetchProfileData();
   }, []);
-
 if (loading)
   return (
     <div className="flex items-center justify-center h-screen">
@@ -166,13 +165,57 @@ if (loading)
 
       <main className="flex-1 max-w-4xl mx-auto p-6">
         {userData && (
-          <div className="bg-white border-4 border-black p-5 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] mb-6 text-left">
-            <h2 className="text-2xl font-bold mb-2">👤 Profil Kamu</h2>
-            <p><strong>Username:</strong> {userData.username}</p>
-            <p><strong>Kontribusi:</strong> <span className="italic text-gray-700">{getCommentBadgeLabel(userData.badge)}</span></p>
-            <p><strong>Popularitas:</strong> <span className="italic text-gray-700">{getBadgeLabel(userData.badge)}</span></p>
-          </div>
-        )}
+        <div className="bg-white border-4 border-black p-5 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] mb-6 text-left">
+          <h2 className="text-2xl font-bold mb-2">👤 Profil Kamu</h2>
+          <p>
+            <strong>Username:</strong> {userData.username}
+          </p>
+
+          {/* Kontribusi dengan tooltip */}
+        <p className="relative group inline-block cursor-default">
+          <strong>Kontribusi:</strong>{" "}
+          <span className="italic text-gray-700">
+            {getCommentBadgeLabel(userData.badge)}
+          </span>
+
+          {/* Tooltip */}
+          <span className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
+            <>
+              Total komentar seluruh postingan kamu:{" "}
+              {
+                posts.reduce((acc, post) => acc + (post.comment_count || 0), 0)
+              }
+              <br />
+              Status: {getCommentBadgeLabel(userData.badge)}
+            </>
+          </span>
+        </p>
+
+        <br />
+
+        {/* Popularitas dengan tooltip */}
+        <p className="relative group inline-block cursor-default">
+          <strong>Popularitas:</strong>{" "}
+          <span className="italic text-gray-700">
+            {getBadgeLabel(userData.badge)}
+          </span>
+
+          {/* Tooltip */}
+          <span className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
+            <>
+              Total like seluruh postingan kamu:{" "}
+              {
+                posts.reduce((acc, post) => acc + (post.like_count || 0), 0)
+              }
+              <br />
+              Status: {getBadgeLabel(userData.badge)}
+            </>
+          </span>
+        </p>
+
+        </div>
+      )}
+
 
         <h3 className="text-xl font-bold mb-4">📬 Postingan Kamu</h3>
         {posts.length > 0 ? (
@@ -202,7 +245,7 @@ if (loading)
 
               <button
                 onClick={() => toggleComments(post.id)}
-                className="mt-3 inline-block bg-yellow-300 hover:bg-yellow-400 text-black px-3 py-1 text-sm font-bold border-[3px] border-black rounded shadow-[2px_2px_0px_black] transition-all duration-200"
+                className="mt-3 inline-block bg-yellow-300 hover:bg-yellow-500 text-black hover:text-black px-3 py-1 text-sm font-bold border-[3px] border-black rounded shadow-[2px_2px_0px_black] transition-all duration-200"
               >
                 {showComments[post.id] ? "🙈 Sembunyikan" : "💬 Lihat Komentar"}
               </button>

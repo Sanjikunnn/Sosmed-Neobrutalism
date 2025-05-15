@@ -41,7 +41,7 @@ export default function Header() {
   return (
     <header
       className={`
-        sticky top-0 z-50 p-4 bg-[#fff200] border-b-[3px] border-black shadow-[6px_6px_0px_#000] 
+        sticky top-0 z-50 p-4 bg-[#FFF3F7] border-b-[3px] border-black shadow-[6px_6px_0px_#000] 
         transform transition-transform duration-300
         ${scrollDir === 'down' ? '-translate-y-full' : 'translate-y-0'}
       `}
