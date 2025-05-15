@@ -3,10 +3,6 @@ import { FaPlus, FaRegCommentDots, FaUserFriends, FaCompass, FaBell, FaHashtag }
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-import AdminHome from './pages/admin/Home';
-import AdminUsers from './pages/admin/Users';
-import AdminProfile from './pages/admin/Profile';
-
 import UserHome from './pages/user/Home';
 import UserPost from './pages/user/Post';
 import UserProfile from './pages/user/Profile';
@@ -21,11 +17,7 @@ function App() {
         {/* Routing for Auth pages */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
- 
-          {/* Routing for Admin */}
-          <Route path="/admin/home" element={<AdminHome />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/profile" element={<AdminProfile />} />
+
 
           {/* Routing for User */}
           <Route path="/user/home" element={<UserHome />} />

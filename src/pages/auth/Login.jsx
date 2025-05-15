@@ -63,7 +63,7 @@ const Login = () => {
       });
   
       setTimeout(() => {
-        navigate('/admin/home');
+        navigate('/user/home');
       }, 1600);
     } catch (err) {
       console.error(err);
