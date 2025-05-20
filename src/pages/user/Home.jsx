@@ -22,7 +22,8 @@ const UserHome = () => {
   const [loading, setLoading] = useState(true);
 
 
-// Bagian fetchData di useEffect UserHome
+// Menjalankan saat pertama render & saat refresh berubah
+// Tujuannya untuk ambil data postingan, data user, dan data user yang sedang login dari Supabase
 useEffect(() => {
   const fetchData = async () => {
     try {
@@ -50,6 +51,9 @@ useEffect(() => {
 // Handle submit post dengan disable button saat loading
 const [posting, setPosting] = useState(false);
 
+// Fungsi untuk mengirim postingan baru
+// Validasi: user harus login dan isi postingan tidak boleh kosong
+// Setelah posting berhasil, reset input dan refresh list postingan
 const handlePostSubmit = async (e) => {
   e.preventDefault();
   const trimmedPost = newPost.trim();
@@ -73,12 +77,17 @@ const handlePostSubmit = async (e) => {
   }
 };
 
+// Fungsi untuk menangani perubahan pada textarea postingan
+// Membatasi jumlah karakter sesuai `MAX_CHARACTERS`
   const handlePostChange = (e) => {
     if (e.target.value.length <= MAX_CHARACTERS) {
       setNewPost(e.target.value);
     }
   };
 
+// Fungsi untuk menyukai postingan
+// Cek apakah user sudah menyukai, kalau belum, simpan ke tabel 'posts_likes'
+// Setelah menyukai, update jumlah like di tabel 'posts'
   const handlePostLike = async (postId) => {
     if (!currentUser) {
       Swal.fire({ icon: 'error', title: 'Login dahulu ya!' });
@@ -118,6 +127,9 @@ const handlePostSubmit = async (e) => {
     }
   };
 
+// Fungsi untuk mengirim komentar ke postingan tertentu
+// Validasi: user harus login dan komentar tidak boleh kosong
+// Setelah komentar terkirim, refresh list komentar
   const handleCommentSubmit = async (postId, comment) => {
     if (!currentUser || comment.trim() === "") return;
 
@@ -131,6 +143,8 @@ const handlePostSubmit = async (e) => {
     }
   };
 
+// Fungsi untuk menghitung jumlah like pada postingan
+// Ambil data dari tabel 'posts_likes' berdasarkan post_id
   const getPostLikes = async (postId) => {
     const { data } = await supabase
       .from('posts_likes')
@@ -139,6 +153,8 @@ const handlePostSubmit = async (e) => {
     return data?.length || 0;
   };
 
+// Fungsi untuk mengambil komentar dari postingan
+// Ambil dari tabel 'comments' beserta data user yang komentar
   const getPostComments = async (postId) => {
     const { data } = await supabase
       .from('comments')
@@ -147,10 +163,14 @@ const handlePostSubmit = async (e) => {
     return data || [];
   };
 
+// Fungsi untuk menemukan data user berdasarkan userId
+// Digunakan untuk menampilkan nama & badge user di tiap postingan
   const findUserData = (userId) => {
     return users.find(u => u.id === userId) || { username: 'User', badge: '❓' };
   };
 
+// Komponen loading skeleton sementara data belum dimuat
+// Dipakai saat `loading` true, biar ada efek animasi loading
   const PostSkeleton = () => (
   <div className="bg-white border-4 border-black p-4 rounded-xl mb-5 shadow-[4px_4px_0px_rgba(0,0,0,1)] animate-pulse space-y-2">
     <div className="h-4 bg-gray-300 rounded w-1/4" />
@@ -203,7 +223,7 @@ if (loading || !currentUser)
             className="w-full p-4 border border-gray-300 bg-gray-100 rounded-md resize-none"
             rows="4"
           />
-          <div className="text-right text-sm text-gray-500 mt-1">{MAX_CHARACTERS - newPost.length} karakter tersisa</div>
+          <div className="text-right text-sm text-gray-500 mt-1">{Math.max(0, MAX_CHARACTERS - newPost.length)} karakter tersisa</div>
           <button
             onClick={handlePostSubmit}
             disabled={posting}
@@ -238,6 +258,9 @@ if (loading || !currentUser)
   );
 };
 
+// Komponen untuk menampilkan 1 postingan lengkap dengan data user, isi postingan, like, dan komentar
+// Pake `useEffect` untuk ambil like dan komentar saat komponen dimount
+// Ada fitur toggle untuk menampilkan/menyembunyikan komentar
 const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handleCommentSubmit }) => {
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState([]);
@@ -264,7 +287,7 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
           {user.username}</div>
           <div className="text-sm text-pink-500 flex items-center gap-1">
             <Star size={14} />
-            {getBadgeLabel(user.username)}
+            {getBadgeLabel(user.badge)}
           </div>      
         </div>
 
@@ -272,12 +295,8 @@ const Post = ({ post, user, getPostLikes, getPostComments, handlePostLike, handl
 
       <div className="text-xs text-gray-400 mb-2">
         {new Date(post.created_at).toLocaleString('id-ID', {
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
+          dateStyle: 'medium',
+          timeStyle: 'short'
         })}
       </div>
       <div className="flex gap-3 items-center">
