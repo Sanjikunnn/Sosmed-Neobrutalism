@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom"; // Kalau pakai React Router
-
+import { Link } from "react-router-dom"; 
 export default function Footer() {
   return (
     <footer className="w-full bg-transparent text-black py-1 mt-6 underline-offset-4">

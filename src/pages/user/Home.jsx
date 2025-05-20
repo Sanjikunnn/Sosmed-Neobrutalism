@@ -20,6 +20,7 @@ const UserHome = () => {
   const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const userPosts = posts.filter(post => post.id_user === currentUser?.id);
 
 
 // Menjalankan saat pertama render & saat refresh berubah
@@ -213,7 +214,7 @@ if (loading || !currentUser)
 
         {/* Statistik */}
         <div className="text-sm text-gray-600">
-          Total Postingan Anda: <strong>{posts.length}</strong>
+          Total Postingan Anda: <strong>{userPosts.length}</strong>
         </div>
 
           <textarea
