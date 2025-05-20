@@ -18,7 +18,6 @@ const UserHome = () => {
   const [newPost, setNewPost] = useState("");
   const [users, setUsers] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const userPosts = posts.filter(post => post.id_user === currentUser?.id);
 

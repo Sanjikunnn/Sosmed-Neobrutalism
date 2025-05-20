@@ -21,7 +21,17 @@ const ProfileUser = () => {
   const [showComments, setShowComments] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+const [expandedPosts, setExpandedPosts] = useState([]);
 
+const toggleReadMore = (postId) => {
+  if (expandedPosts.includes(postId)) {
+    setExpandedPosts(expandedPosts.filter(id => id !== postId));
+  } else {
+    setExpandedPosts([...expandedPosts, postId]);
+  }
+};
+
+const MAX_LENGTH = 100;
   const toggleComments = useCallback((postId) => {
     setShowComments((prev) => ({
       ...prev,
@@ -257,20 +267,6 @@ const totalLikes = posts.reduce((acc, post) => acc + (post.like_count || 0), 0);
 // Hitung total komentar dari semua post
 const totalComments = posts.reduce((acc, post) => acc + (post.comment_count || 0), 0);
 
-// Fungsi untuk memilih ikon badge berdasarkan jumlah like
-const getBadgeIconComponent = (likes) => {
-  if (likes >= 100) return <Trophy className="w-5 h-5 text-yellow-500" />;
-  if (likes >= 50) return <Star className="w-5 h-5 text-purple-500" />;
-  if (likes >= 10) return <Heart className="w-5 h-5 text-pink-500" />;
-  return <Smile className="w-5 h-5 text-blue-500" />;
-};
-
-// Fungsi untuk memilih ikon badge komentar berdasarkan jumlah komentar
-const getCommentBadgeIconComponent = (comments) => {
-  if (comments >= 50) return <MessageSquare className="w-5 h-5 text-green-600" />;
-  if (comments >= 20) return <MessageSquare className="w-5 h-5 text-blue-600" />;
-  return <MessageSquare className="w-5 h-5 text-gray-600" />;
-};
 
 return (
   <div className="min-h-screen bg-[#FFF3F7] text-black flex flex-col font-sans">
@@ -278,7 +274,7 @@ return (
 
     <main className="flex-1 max-w-4xl mx-auto p-6 w-full">
       {userData && (
-        <section className="bg-white border-4 border-black p-6 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] mb-8">
+        <section className="bg-transparent border-4 border-black p-6 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] mb-8">
           <div className="flex items-center gap-4 mb-4">
             <div className="bg-pink-100 p-3 rounded-full border-2 border-black">
               <User className="w-8 h-8 text-pink-600" />
@@ -289,22 +285,22 @@ return (
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <span className="font-semibold min-w-[100px]">Username:</span>
-              <span className="flex-1 bg-pink-50 px-3 py-1 rounded-md border border-pink-200">
+              <span className="flex-1 bg-pink-50 px-3 py-1 rounded-md border border-pink-700">
                 {userData.username || 'Tidak tersedia'}
               </span>
             </div>
 
             <div className="relative group flex items-center gap-2">
-              <span className="font-semibold min-w-[100px]">Kontribusi:</span>
-              <span className="flex items-center gap-2 flex-1 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
+              <span className="font-semibold min-w-[100px]">Popularitas:</span>
+              <span className="flex items-center gap-2 flex-1 bg-blue-50 px-3 py-1 rounded-md border border-blue-700">
                 {/* Tampilkan ikon badge komentar berdasarkan total komentar */}
-                {getCommentBadgeIconComponent(totalComments)}
+                🗯{(totalComments)} ||
                 <span className="italic text-gray-700">
                   {getCommentBadgeLabel(totalComments)}
                 </span>
               </span>
               {/* Tooltip yang muncul saat hover untuk info total komentar dan status */}
-              <span className="absolute left-full ml-2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
+              <span className="absolute left-0 ml-2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
                 Total komentar: {totalComments}
                 <br />
                 Status: {getCommentBadgeLabel(totalComments)}
@@ -312,16 +308,16 @@ return (
             </div>
 
             <div className="relative group flex items-center gap-2">
-              <span className="font-semibold min-w-[100px]">Popularitas:</span>
-              <span className="flex items-center gap-2 flex-1 bg-yellow-50 px-3 py-1 rounded-md border border-yellow-200">
+              <span className="font-semibold min-w-[100px]">Kontribusi:</span>
+              <span className="flex items-center gap-2 flex-1 bg-yellow-50 px-3 py-1 rounded-md border border-yellow-700">
                 {/* Tampilkan ikon badge like berdasarkan total like */}
-                {getBadgeIconComponent(totalLikes)}
+                👍{(totalLikes)} ||
                 <span className="italic text-gray-700">
                   {getBadgeLabel(totalLikes)}
                 </span>
               </span>
               {/* Tooltip yang muncul saat hover untuk info total like dan status */}
-              <span className="absolute left-full ml-2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
+              <span className="absolute left-0 ml-2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
                 Total like: {totalLikes}
                 <br />
                 Status: {getBadgeLabel(totalLikes)}
@@ -336,108 +332,123 @@ return (
         <h3 className="text-2xl font-bold">Postingan Kamu</h3>
       </div>
 
-      {posts.length > 0 ? (
-        <div className="space-y-6">
-          {posts.map((post) => (
-            <article
-              key={post.id}
-              className="bg-white border-4 border-black p-5 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] transition-all duration-200"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex items-center gap-2">
-                  <img
-                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${post.users?.username || 'User'}`}
-                    className="w-8 h-8 rounded-full border-2 border-black"
-                    alt="avatar"
-                  />
-                  <span className="font-semibold">
-                    {post.users?.username || 'Anonim'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-sm text-gray-600">
-                  <Calendar className="w-4 h-4" />
-                  {/* Format tanggal postingan */}
-                  <span>{new Date(post.created_at).toLocaleDateString()}</span>
-                </div>
+    {posts.length > 0 ? (
+      <div className="space-y-6">
+        {posts.map((post) => (
+          <article
+            key={post.id}
+            className="bg-transparent border-4 border-black p-5 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] transition-all duration-200"
+          >
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex items-center gap-2">
+                <img
+                  src={`https://api.dicebear.com/7.x/initials/svg?seed=${post.users?.username || 'User'}`}
+                  className="w-8 h-8 rounded-full border-2 border-black"
+                  alt="avatar"
+                />
+                <span className="font-semibold">
+                  {post.users?.username || 'Anonim'}
+                </span>
               </div>
+              <div className="flex items-center gap-1 text-sm text-gray-600">
+                <Calendar className="w-4 h-4" />
+                <span>{new Date(post.created_at).toLocaleDateString()}</span>
+              </div>
+            </div>
 
-              {/* Konten post */}
-              <p className="mb-5 whitespace-pre-wrap text-gray-800">{post.content}</p>
+            {/* Konten post dengan read more/less */}
 
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-4">
-                  {/* Jumlah like pada post */}
-                  <span className="flex items-center gap-1 text-gray-600">
-                    <Heart className="w-5 h-5 text-pink-500" />
-                    <span>{post.like_count || 0}</span>
-                  </span>
+            <div className="relative mb-10">
+              <p className="whitespace-pre-wrap text-gray-800">
+                {expandedPosts.includes(post.id) || post.content.length <= MAX_LENGTH
+                  ? post.content
+                  : post.content.substring(0, MAX_LENGTH) + '...'}
+              </p>
 
-                  {/* Jumlah komentar pada post */}
-                  <span className="flex items-center gap-1 text-gray-600">
-                    <MessageSquare className="w-5 h-5 text-blue-500" />
-                    <span>{post.comment_count || 0}</span>
-                  </span>
-                </div>
-
-                {/* Tombol untuk toggle show/hide komentar */}
-                <button
-                  onClick={() => toggleComments(post.id)}
-                  className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              {post.content.length > MAX_LENGTH && (
+                <span
+                  onClick={() => toggleReadMore(post.id)}
+                  className="absolute right-0 text-blue-600 hover:underline hover:text-green-600 cursor-pointer text-sm font-semibold"
+                  role="button"
+                  tabIndex={0}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') toggleReadMore(post.id);
+                  }}
                 >
-                  {showComments[post.id] ? (
-                    <>
-                      <ChevronUp className="w-4 h-4" />
-                      Sembunyikan
-                    </>
-                  ) : (
-                    <>
-                      <ChevronDown className="w-4 h-4" />
-                      Lihat Komentar
-                    </>
-                  )}
-                </button>
+                  {expandedPosts.includes(post.id) ? 'Lebih Sedikit' : 'Lihat Selengkapnya'}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center gap-4">
+                <span className="flex items-center gap-1 text-gray-600">
+                  <Heart className="w-5 h-5 text-pink-500" />
+                  <span>{post.like_count || 0}</span>
+                </span>
+
+                <span className="flex items-center gap-1 text-gray-600">
+                  <MessageSquare className="w-5 h-5 text-blue-500" />
+                  <span>{post.comment_count || 0}</span>
+                </span>
               </div>
 
-              {/* Section komentar yang muncul jika toggle true */}
-              {showComments[post.id] && (
-                <section className="mt-4 bg-[#FFE6F1] p-4 rounded-lg border-2 border-pink-300 max-h-60 overflow-y-auto">
-                  {(commentsByPost[post.id]?.length > 0) ? (
-                    <div className="space-y-3">
-                      {commentsByPost[post.id].map((comment, idx) => (
-                        <div
-                          key={`${comment.created_at}-${idx}`}
-                          className="pb-2 border-b border-pink-200 last:border-none"
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <img
-                              src={`https://api.dicebear.com/7.x/initials/svg?seed=${comment.username}`}
-                              className="w-5 h-5 rounded-full"
-                              alt="avatar"
-                            />
-                            <span className="font-semibold">{comment.username}</span>
-                            <span className="text-xs text-gray-500">
-                              {new Date(comment.created_at).toLocaleString()}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                            {comment.content}
-                          </p>
+              <button
+                onClick={() => toggleComments(post.id)}
+                className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                {showComments[post.id] ? (
+                  <>
+                    <ChevronUp className="w-4 h-4" />
+                    Sembunyikan
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-4 h-4" />
+                    Lihat Komentar
+                  </>
+                )}
+              </button>
+            </div>
+
+            {showComments[post.id] && (
+              <section className="mt-4 bg-[#FFE6F1] p-4 rounded-lg border-2 border-pink-300 max-h-60 overflow-y-auto">
+                {(commentsByPost[post.id]?.length > 0) ? (
+                  <div className="space-y-3">
+                    {commentsByPost[post.id].map((comment, idx) => (
+                      <div
+                        key={`${comment.created_at}-${idx}`}
+                        className="pb-2 border-b border-pink-200 last:border-none"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <img
+                            src={`https://api.dicebear.com/7.x/initials/svg?seed=${comment.username}`}
+                            className="w-5 h-5 rounded-full"
+                            alt="avatar"
+                          />
+                          <span className="font-semibold">{comment.username}</span>
+                          <span className="text-xs text-gray-500">
+                            {new Date(comment.created_at).toLocaleString()}
+                          </span>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500 italic text-center">
-                      Belum ada komentar.
-                    </p>
-                  )}
-                </section>
-              )}
-            </article>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 italic">Kamu belum punya postingan.</p>
-      )}
+                        <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                          {comment.content}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 italic text-center">
+                    Belum ada komentar.
+                  </p>
+                )}
+              </section>
+            )}
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p className="text-center text-gray-500 italic">Kamu belum punya postingan.</p>
+    )}
     </main>
 
     <Footer />
