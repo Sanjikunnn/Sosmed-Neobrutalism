@@ -10,7 +10,7 @@ import TermsCondition from './pages/termsCondition';
 // Import halaman user
 import UserHome from './pages/user/Home';
 import UserPost from './pages/user/Post';
-import UserProfile from './pages/user/Profile';
+import Profile from './pages/user/Profile';
 
 // Import halaman auth
 import Login from './pages/auth/Login';
@@ -32,8 +32,8 @@ function App() {
         {/* Routing untuk halaman user */}
         <Route path="/user/home" element={<UserHome />} />
         <Route path="/user/post" element={<UserPost />} />
-        <Route path="/user/profile" element={<UserProfile />} />
-        
+        <Route path="/user/profile/:userId" element={<Profile />} />
+
         {/* Routing untuk halaman utama layout */}
         <Route path="/" element={<MainLayout />} />
       </Routes>

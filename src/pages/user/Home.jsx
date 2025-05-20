@@ -5,14 +5,12 @@ import { supabase } from "../../utils/supabase";
 import Swal from 'sweetalert2';
 import {
   MAX_CHARACTERS,
-  getBadgeCommentsPost,
   getBadgeLabel,
-  getBadgeLikesPost,
-  getCommentBadgeLabel,
+  getBadgeIcon,
 } from "../../components/Badge";
 import withAuth from "../../middleware/withAuth";
 import { Star, Heart, MessageCircle, Loader2, PlusCircle } from 'lucide-react';
-
+import { Link } from 'react-router-dom';
 const UserHome = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -154,7 +152,7 @@ useEffect(() => {
       .eq('post_id', postId);
     return data || [];
   };
-const currentStats = userStats[currentUser?.id] || { totalLikes: 0, totalComments: 0 };
+  const currentStats = userStats[currentUser?.id] || { totalLikes: 0, totalComments: 0 };
 
   const findUserData = (userId) => {
     return users.find(u => u.id === userId) || { username: 'User'};
@@ -189,11 +187,15 @@ const currentStats = userStats[currentUser?.id] || { totalLikes: 0, totalComment
       <Header />
       <main className="flex-1 p-4 max-w-2xl mx-auto">
         <div className="bg-white shadow-lg p-6 rounded-lg mb-6">
+          
           <h1 className="text-2xl font-semibold mb-2 flex justify-between items-center">
-            <span>Halo, {findUserData(currentUser?.id)?.username} 👋</span>
-            <span className="text-sm text-pink-500 flex items-center gap-1">
-              {getBadgeLabel(currentStats.totalLikes)}
-            </span>
+            <Link 
+              to={`/user/profile/${currentUser?.id}`} 
+              className="hover:text-pink-600 hover:underline transition-colors"
+            >
+              <span>Halo, {findUserData(currentUser?.id)?.username} 👋</span>
+            </Link>
+            {/* ... */}
           </h1>
 
           <p className="text-sm text-gray-600 mb-4">Bagikan postinganmu hari ini🌠</p>
@@ -273,16 +275,21 @@ const Post = ({ post, user, totalComments, totalLikes, getPostComments, handlePo
   return (
     <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
       <div className="flex justify-between items-center mb-2">
-        <div className="font-semibold text-lg">
+      <div className="font-semibold text-lg">
+        <Link 
+          to={`/user/profile/${user.id}`} 
+          className="hover:text-pink-600 hover:underline transition-colors"
+        >
           <img 
             src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.username}`} 
             className="w-6 h-6 rounded-full inline-block mr-2" 
             alt={user.username}
           />
           {user.username}
-        </div>
+        </Link>
+      </div>
         <div className="text-sm text-pink-500 flex items-center gap-1">
-          {getBadgeLikesPost(totalLikes)}
+          {getBadgeIcon(totalLikes)}{getBadgeLabel(totalLikes)}
         </div>      
       </div>
 
@@ -322,17 +329,19 @@ const Post = ({ post, user, totalComments, totalLikes, getPostComments, handlePo
               {comments.map((comment, index) => (
                 <div key={index} className="text-sm border-t pt-2">
                   <strong>
+                    <Link 
+                      to={`/user/profile/${comment.users?.id}`} 
+                      className="hover:text-pink-600 hover:underline transition-colors"
+                    >
                     <img 
                       src={`https://api.dicebear.com/7.x/initials/svg?seed=${comment.users?.username}`} 
-                      className="w-5 h-5 rounded-full inline-block mr-1" 
+                      className="w-5 h-5 rounded-full inline-block mr-1 mb-1" 
                       alt={comment.users?.username}
                     />
                     {comment.users?.username || 'Anonim'}
+                    </Link>
                   </strong> 
-                  <span className="ml-2 text-xs text-blue-600">
-                    {getBadgeCommentsPost(totalComments)}
-                  </span>
-                  <div className="text-sm">{comment.content}</div>
+                  <div className="text-sm mb-1">{comment.content}</div>
                   <div className="text-xs text-gray-500">
                     {new Date(comment.created_at).toLocaleString("id-ID", {
                       hour: "2-digit",

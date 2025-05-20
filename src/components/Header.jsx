@@ -5,11 +5,24 @@ import Swal from 'sweetalert2';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrollDir, setScrollDir] = useState('up'); // track arah scroll
+  const [scrollDir, setScrollDir] = useState('up');
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Handle logout
+  // Ambil user dengan async getUser()
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error('Error fetching user:', error.message);
+      } else {
+        setUser(data.user);
+      }
+    };
+    fetchUser();
+  }, []);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     Swal.fire({
@@ -24,19 +37,20 @@ export default function Header() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        // scroll ke bawah
         setScrollDir('down');
       } else if (currentScrollY < lastScrollY) {
-        // scroll ke atas
         setScrollDir('up');
       }
       setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
-
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
+
+  if (!user) {
+    return null; // Bisa ganti loading spinner juga kalau mau
+  }
 
   return (
     <header
@@ -51,7 +65,6 @@ export default function Header() {
           🚀 Sosmed-Neobrutalism
         </h1>
 
-        {/* Hamburger untuk mobile */}
         <button
           className="md:hidden text-black text-sm"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -60,7 +73,6 @@ export default function Header() {
           ☰
         </button>
 
-        {/* Menu desktop */}
         <nav className="hidden md:flex space-x-4">
           <Link
             to="/user/home"
@@ -69,7 +81,7 @@ export default function Header() {
             🏠 Home
           </Link>
           <Link
-            to="/user/profile"
+            to={`/user/profile/${user.id}`}
             className="bg-white text-black text-sm font-extrabold px-4 py-2 border-4 border-black shadow-[4px_4px_0px_#000] hover:bg-pink-400 hover:text-black hover:shadow-[6px_6px_0px_#000] transition-all duration-200 active:scale-95"
           >
             🙍‍♂️ Profile
@@ -83,7 +95,6 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* Menu mobile */}
       {menuOpen && (
         <div className="mt-4 flex flex-col space-y-2 md:hidden">
           <Link
@@ -94,7 +105,7 @@ export default function Header() {
             🏠 Home
           </Link>
           <Link
-            to="/user/profile"
+            to={`/user/profile/${user.id}`}
             className="bg-white text-black font-extrabold px-4 py-2 border-4 border-black shadow-[3px_3px_0px_#000] hover:bg-pink-400 hover:text-black"
             onClick={() => setMenuOpen(false)}
           >

@@ -5,6 +5,7 @@ import Footer from "../../components/Footer";
 import {
   getBadgeIcon,
   getBadgeLabel,
+  getCommentBadgeIcon,
   getCommentBadgeLabel,
 } from "../../components/Badge";
 import withAuth from "../../middleware/withAuth";
@@ -12,6 +13,7 @@ import {
   Heart, MessageSquare, User, Calendar, ChevronDown, ChevronUp, 
   Mail, Trophy, Star, Smile, Frown, Meh, ArrowRight, Lock 
 } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 const ProfileUser = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -21,7 +23,8 @@ const ProfileUser = () => {
   const [showComments, setShowComments] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-const [expandedPosts, setExpandedPosts] = useState([]);
+  const [expandedPosts, setExpandedPosts] = useState([]);
+  const { userId } = useParams();
 
 const toggleReadMore = (postId) => {
   if (expandedPosts.includes(postId)) {
@@ -151,23 +154,24 @@ const MAX_LENGTH = 100;
     const loadData = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
-        const user = await fetchAuthUser();
+        // kamu bisa tetap fetch user yang login buat authUser
+        const auth = await fetchAuthUser();
         if (!isMounted) return;
-        
-        if (!user) {
-          setAuthUser(null);
+
+        setAuthUser(auth);
+
+        if (!userId) {
+          setError("User ID tidak ditemukan di URL");
           setLoading(false);
           return;
         }
-        
-        setAuthUser(user);
 
-        // Ambil postingan dan profil sekaligus
+        // Ambil data user profil dan postingan berdasarkan userId dari URL
         const [userPosts, profile] = await Promise.all([
-          fetchUserPosts(user.id),
-          fetchUserProfile(user.id)
+          fetchUserPosts(userId),
+          fetchUserProfile(userId),
         ]);
 
         if (!isMounted) return;
@@ -175,27 +179,18 @@ const MAX_LENGTH = 100;
         setPosts(userPosts);
         setUserData(profile);
 
-        // Ambil komentar per post
-        const commentsMap = await fetchCommentsByPosts(
-          userPosts.map((p) => p.id)
-        );
-        
+        const commentsMap = await fetchCommentsByPosts(userPosts.map((p) => p.id));
+
         if (!isMounted) return;
+
         setCommentsByPost(commentsMap);
 
-        // Hitung total like dan komentar
-        const totalLikes = userPosts.reduce(
-          (sum, post) => sum + (post.like_count || 0),
-          0
-        );
-        
-        const totalComments = userPosts.reduce(
-          (sum, post) => sum + (post.comment_count || 0),
-          0
-        );
-
-        // Update badge user
-        await updateUserBadge(user.id, totalLikes, totalComments);
+        // Kalau mau update badge, mending hanya kalau userId === auth.id (user yang login)
+        if (auth && auth.id === userId) {
+          const totalLikes = userPosts.reduce((sum, post) => sum + (post.like_count || 0), 0);
+          const totalComments = userPosts.reduce((sum, post) => sum + (post.comment_count || 0), 0);
+          await updateUserBadge(userId, totalLikes, totalComments);
+        }
       } catch (err) {
         if (!isMounted) return;
         console.error("Error memuat data profil:", err);
@@ -212,7 +207,8 @@ const MAX_LENGTH = 100;
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [userId]);
+
 
   // Komponen rendernya bisa lanjut ya
 
@@ -292,35 +288,35 @@ return (
 
             <div className="relative group flex items-center gap-2">
               <span className="font-semibold min-w-[100px]">Popularitas:</span>
-              <span className="flex items-center gap-2 flex-1 bg-blue-50 px-3 py-1 rounded-md border border-blue-700">
+              <span className="flex items-center gap-1 flex-1 bg-blue-50 px-1 py-1 rounded-md border border-blue-700">
                 {/* Tampilkan ikon badge komentar berdasarkan total komentar */}
                 🗯{(totalComments)} ||
-                <span className="italic text-gray-700">
-                  {getCommentBadgeLabel(totalComments)}
+                <span className="absolute italic text-sm text-gray-700 right-1">
+                  {getCommentBadgeIcon(totalComments)}{getCommentBadgeLabel(totalComments)}
                 </span>
               </span>
               {/* Tooltip yang muncul saat hover untuk info total komentar dan status */}
               <span className="absolute left-0 ml-2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
                 Total komentar: {totalComments}
                 <br />
-                Status: {getCommentBadgeLabel(totalComments)}
+                Status: {getCommentBadgeIcon(totalComments)}{getCommentBadgeLabel(totalComments)}
               </span>
             </div>
 
             <div className="relative group flex items-center gap-2">
               <span className="font-semibold min-w-[100px]">Kontribusi:</span>
-              <span className="flex items-center gap-2 flex-1 bg-yellow-50 px-3 py-1 rounded-md border border-yellow-700">
+              <span className="flex items-center gap-1 flex-1 bg-yellow-50 px-1 py-1 rounded-md border border-yellow-700">
                 {/* Tampilkan ikon badge like berdasarkan total like */}
                 👍{(totalLikes)} ||
-                <span className="italic text-gray-700">
-                  {getBadgeLabel(totalLikes)}
+                <span className="absolute italic text-sm text-gray-700 right-1">
+                  {getBadgeIcon(totalLikes)}{getBadgeLabel(totalLikes)}
                 </span>
               </span>
               {/* Tooltip yang muncul saat hover untuk info total like dan status */}
               <span className="absolute left-0 ml-2 w-max px-3 py-1 text-xs text-white bg-pink-700 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50 transition-opacity duration-300 text-left">
                 Total like: {totalLikes}
                 <br />
-                Status: {getBadgeLabel(totalLikes)}
+                Status: {getBadgeIcon(totalLikes)}{getBadgeLabel(totalLikes)}
               </span>
             </div>
           </div>
