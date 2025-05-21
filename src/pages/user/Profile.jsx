@@ -11,7 +11,7 @@ import {
 import withAuth from "../../middleware/withAuth";
 import { 
   Heart, MessageSquare, User, Calendar, ChevronDown, ChevronUp, 
-  Mail, Trophy, Star, Smile, Frown, Meh, ArrowRight, Lock 
+  Mail, Frown, Lock 
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 
@@ -268,7 +268,7 @@ return (
   <div className="min-h-screen bg-[#FFF3F7] text-black flex flex-col font-sans">
     <Header />
 
-    <main className="flex-1 max-w-4xl mx-auto p-6 w-full">
+    <main className="flex-1 max-w-4xl mx-auto p-6 w-full font-sans font-bold tracking-tight">
       {userData && (
         <section className="bg-transparent border-4 border-black p-6 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] mb-8">
           <div className="flex items-center gap-4 mb-4">
