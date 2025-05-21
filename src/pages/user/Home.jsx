@@ -334,7 +334,6 @@ return (
   </div>
 
   <div className="mb-3 text-black whitespace-pre-line font-medium">{post.content}</div>
-
   <div className="text-xs text-gray-800 mb-3 font-mono border-l-4 border-black pl-2">
     {new Date(post.created_at).toLocaleString('id-ID', {
       dateStyle: 'medium',
@@ -344,14 +343,14 @@ return (
 
   <div className="flex gap-4 items-center">
     <button
-      className="flex items-center gap-1 text-sm px-3 py-1 bg-red-300 text-black border-2 border-black shadow-[2px_2px_0px_#000] hover:bg-red-400"
+      className="flex items-center gap-1 text-sm px-3 py-1 bg-red-300 text-black border-2 border-black shadow-[2px_2px_0px_#000] hover:bg-red-400 hover:text-black"
       onClick={() => handlePostLike(post.id)}
     >
       <Heart size={16} />
       <span>{post.like_count || 0}</span>
     </button>
     <button
-      className="flex items-center gap-1 text-sm px-3 py-1 bg-green-300 text-black border-2 border-black shadow-[2px_2px_0px_#000] hover:bg-green-400"
+      className="flex items-center gap-1 text-sm px-3 py-1 bg-green-300 text-black border-2 border-black shadow-[2px_2px_0px_#000] hover:bg-green-500 hover:text-black"
       onClick={() => setShowComments(!showComments)}
     >
       <MessageCircle size={16} />
