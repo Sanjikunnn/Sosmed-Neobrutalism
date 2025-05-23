@@ -45,109 +45,156 @@ function App() {
 // Komponen fitur (digunakan untuk menampilkan icon dan deskripsi fitur)
 function FeatureItem({ icon, title, description }) {
   return (
-    <div className="bg-white p-4 border-4 border-black shadow-[4px_4px_0_0_black]">
-      {icon}
-      <h3 className="font-bold text-lg">{title}</h3>
-      <p className="text-sm">{description}</p>
+    <div className="bg-yellow-100 p-5 border-4 border-black shadow-[4px_4px_0_0_black] rounded-lg text-center">
+      <div className="text-4xl mb-3 text-blue-600">{icon}</div>
+      <h3 className="font-bold text-lg text-black">{title}</h3>
+      <p className="text-sm text-gray-700">{description}</p>
     </div>
   );
 }
 
+
 // Komponen News Feed
 function NewsFeedSection() {
+  const items = [
+    { text: 'Aulia baru saja memposting foto!', time: '2 hours ago' },
+    { text: 'Bima sedang berbagi pengalaman dalam pengelolaan ternak lele!', time: '1 day ago' },
+    { text: 'Iqbal sedang berbagi pengalaman dalam pengembangan web!', time: '2 days ago' },
+  ];
+
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full">
-      <h2 className="text-3xl font-bold col-span-full">News Feed</h2>
-      {['Aulia baru saja memposting foto!', 'Bima sedang berbagi pengalaman dalam pengelolaan ternak lele!', 'Iqbal sedang berbagi pengalaman dalam pengembangan web!'].map((text, index) => (
-        <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] mb-6">
-          <p className="text-base">“{text}”</p>
-          <p className="text-xs text-gray-600">{index === 0 ? '2 hours ago' : index === 1 ? '1 day ago' : '2 days ago'}</p>
-        </div>
-      ))}
+    <section className="w-full mt-8">
+      <h2 className="text-3xl font-bold mb-4">📰 News Feed</h2>
+      <div className="grid md:grid-cols-3 gap-6">
+        {items.map(({ text, time }, index) => (
+          <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] rounded-lg">
+            <p className="text-base font-semibold text-black">“{text}”</p>
+            <p className="text-xs text-gray-500 mt-2">{time}</p>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
+
+
 
 // Komponen Suggestions (saran teman)
 function SuggestionsSection() {
+  const names = ['Aulia', 'Bima', 'Iqbal'];
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full">
-      <h2 className="text-3xl font-bold col-span-full">Suggestions</h2>
-      {['Aulia', 'Bima', 'Iqbal'].map((name, index) => (
-        <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] mb-6">
-          <h3 className="font-bold">Suggested Friend: {name}</h3>
-          <button className="bg-blue-500 text-white py-2 px-4 mt-2 rounded-full">Follow</button>
-        </div>
-      ))}
+    <section className="w-full mt-8">
+      <h2 className="text-3xl font-bold mb-4">👥 Suggestions</h2>
+      <div className="grid md:grid-cols-3 gap-6">
+        {names.map((name, index) => (
+          <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] rounded-lg text-center">
+            <img
+              src={`https://i.pravatar.cc/100?img=${index + 20}`}
+              alt={name}
+              className="mx-auto rounded-full w-16 h-16 mb-2"
+            />
+            <h3 className="font-bold text-black">{name}</h3>
+            <button className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-4 mt-2 rounded-full transition">Follow</button>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
+
 
 // Komponen Trending (trending topik)
 function TrendingSection() {
+  const tags = ['#WebDesign', '#TechNews', '#Coding'];
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full">
-      <h2 className="text-3xl font-bold col-span-full">Trending</h2>
-      {['#WebDesign', '#TechNews', '#Coding'].map((tag, index) => (
-        <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] mb-6">
-          <h3 className="text-xl font-bold">
-            <FaHashtag className="inline mr-2" />
-            {tag}
-          </h3>
-          <p className="text-sm">Web design is taking the digital world by storm!</p>
-        </div>
-      ))}
+    <section className="w-full mt-8">
+      <h2 className="text-3xl font-bold mb-4">🔥 Trending Topics</h2>
+      <div className="grid md:grid-cols-3 gap-6">
+        {tags.map((tag, index) => (
+          <div key={index} className="bg-pink-100 p-4 border-4 border-black shadow-[6px_6px_0_0_black] rounded-lg">
+            <h3 className="text-xl font-bold text-pink-700">🔥 {tag}</h3>
+            <p className="text-sm text-gray-700 mt-2">Lagi rame banget dibahas hari ini!</p>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
+
 
 // Komponen Friend Requests (permintaan pertemanan)
 function FriendRequestsSection() {
+  const names = ['Aulia', 'Bima', 'Iqbal'];
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full">
-      <h2 className="text-3xl font-bold col-span-full">Friend Requests</h2>
-      {['Aulia', 'Bima', 'Iqbal'].map((name, index) => (
-        <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] mb-6">
-          <h3 className="font-bold">{name} sent you a friend request!</h3>
-          <button className="bg-green-500 text-white py-2 px-4 mt-2 rounded-full">Accept</button>
-        </div>
-      ))}
+    <section className="w-full mt-8">
+      <h2 className="text-3xl font-bold mb-4">📨 Friend Requests</h2>
+      <div className="grid md:grid-cols-3 gap-6">
+        {names.map((name, index) => (
+          <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] rounded-lg text-center">
+            <p className="font-semibold text-black">{name} sent you a friend request!</p>
+            <div className="mt-3 flex justify-center gap-2">
+              <button className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full">Accept</button>
+              <button className="bg-red-400 hover:bg-red-500 text-white px-3 py-1 rounded-full">Ignore</button>
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
+
+
 
 // Komponen ini menampilkan notifikasi terbaru
 function NotificationsSection() {
+  const notifs = [
+    { text: 'New comment on your post', time: '3 mins ago' },
+    { text: 'You have a new follower', time: '1 hour ago' },
+    { text: 'Your story was liked by 10 people', time: '5 hours ago' },
+  ];
+
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full">
-      <h2 className="text-3xl font-bold col-span-full">Notifications</h2>
-      {['New comment on your post', 'You have a new follower', 'Your story was liked by 10 people'].map((notif, index) => (
-        <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] mb-6">
-          <p className="text-base">{notif}</p>
-          <p className="text-xs text-gray-600">{index === 0 ? '3 mins ago' : index === 1 ? '1 hour ago' : '5 hours ago'}</p>
-        </div>
-      ))}
+    <section className="w-full mt-8">
+      <h2 className="text-3xl font-bold mb-4">🔔 Notifications</h2>
+      <div className="grid md:grid-cols-3 gap-6">
+        {notifs.map((n, index) => (
+          <div key={index} className="bg-blue-100 p-4 border-4 border-black shadow-[6px_6px_0_0_black] rounded-lg">
+            <p className="text-base text-black">{n.text}</p>
+            <p className="text-xs text-gray-700 mt-1">{n.time}</p>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
+
+
 
 // Komponen ini menampilkan sorotan cerita pengguna
 function StoryHighlightsSection() {
+  const stories = [
+    '🌴 Holiday in Bali',
+    '💻 My Web Dev Journey',
+    '🎓 Graduation Day',
+  ];
+
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full mb-10">
-      <h2 className="text-3xl font-bold col-span-full">Story Highlights</h2>
-      {['Holiday in Bali 🌴', 'My Web Dev Journey 💻', 'Graduation Day 🎓'].map((story, index) => (
-        <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] mb-6">
-          <p className="text-base">{story}</p>
-          <button className="bg-purple-500 text-white py-2 px-4 mt-2 rounded-full">View Story</button>
-        </div>
-      ))}
+    <section className="w-full mt-8 mb-10">
+      <h2 className="text-3xl font-bold mb-4">🌟 Story Highlights</h2>
+      <div className="grid md:grid-cols-3 gap-6">
+        {stories.map((story, index) => (
+          <div key={index} className="bg-purple-100 p-4 border-4 border-black shadow-[6px_6px_0_0_black] rounded-lg text-center">
+            <p className="text-base font-semibold text-purple-800">{story}</p>
+            <button className="bg-purple-600 hover:bg-purple-700 text-white py-1 px-4 mt-2 rounded-full">View Story</button>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
 
-// Komponen layout utama yang ditampilkan di halaman /
 
+// Komponen layout utama yang ditampilkan di halaman /
 function MainLayout() {
   const [showJoinUs, setShowJoinUs] = React.useState(true);
 
@@ -272,6 +319,7 @@ function MainLayout() {
           <FeatureItem icon={<FaCompass />} title="Explore" description="Temukan hal-hal menarik tiap hari." />
         </section>
 
+        <NewsFeedSection />
         <SuggestionsSection />
         <TrendingSection />
         <FriendRequestsSection />
