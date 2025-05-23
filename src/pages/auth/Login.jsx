@@ -96,7 +96,7 @@ const Login = () => {
   // Custom function to handle back navigation with fallback
   const handleBack = () => {
     if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1); // If there's a history entry, go back
+      navigate('/'); // If there's a history entry, go back
     } else {
       navigate('/'); // No history entry, go to the home page
     }

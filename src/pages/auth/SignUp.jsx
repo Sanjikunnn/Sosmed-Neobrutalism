@@ -91,7 +91,7 @@ const Signup = () => {
   
   const handleBack = () => {
     if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1);
+      navigate('/');
     } else {
       navigate('/');
     }

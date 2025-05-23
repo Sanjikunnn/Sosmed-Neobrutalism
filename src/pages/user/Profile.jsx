@@ -181,7 +181,12 @@ const saveUsername = async () => {
     setLoading(false);
   }
 };
-
+// save username pake enter
+const handleKeyPress = (e) => {
+  if (e.key === 'Enter') {
+    saveUsername();
+  }
+};
   const toggleReadMore = (postId) => {
   if (expandedPosts.includes(postId)) {
     setExpandedPosts(expandedPosts.filter(id => id !== postId));
@@ -437,7 +442,7 @@ return (
         <div className="space-y-2 sm:space-y-4">
           {/* Username Section */}
           <div className="flex flex-row items-center gap-2">
-            <span className="font-bold min-w-[78px] sm:min-w-[120px] text-xs sm:text-lg">USERNAME:</span>
+            <span className="font-bold min-w-[78px] sm:min-w-[120px] text-xs sm:text-lg">USERNAME</span>
             {isEditingUsername ? (
               <div className="flex-1 flex flex-col gap-1">
                 <div className="flex gap-1 sm:gap-2">
@@ -446,6 +451,7 @@ return (
                     ref={usernameInputRef}
                     value={newUsername}
                     onChange={(e) => setNewUsername(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     className="flex-1 bg-white px-2 py-1 sm:px-4 sm:py-2 rounded-md sm:rounded-lg border-2 sm:border-4 border-black text-xs sm:text-base"
                     maxLength={20}
                   />
@@ -487,7 +493,7 @@ return (
 
           {/* Bio Section */}
           <div className="flex flex-row items-start gap-2">
-            <span className="font-bold min-w-[78px] sm:min-w-[120px] text-xs sm:text-lg pt-1">BIO:</span>
+            <span className="font-bold min-w-[78px] sm:min-w-[120px] text-xs sm:text-lg pt-1">BIO</span>
             {isEditingBio ? (
               <div className="flex-1 flex flex-col gap-1">
                 <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
@@ -540,7 +546,7 @@ return (
           {/* Popularitas & Kontribusi Sections */}
           <div className="flex flex-col gap-2 sm:gap-4">
             <div className="flex flex-row items-center gap-2">
-              <span className="font-bold min-w-[78px] sm:min-w-[120px] text-xs sm:text-lg">POPULARITAS:</span>
+              <span className="font-bold min-w-[78px] sm:min-w-[120px] text-xs sm:text-lg">POPULARITAS</span>
               <div className="relative flex-1 bg-sky-300 px-2 py-1 sm:px-4 sm:py-2 rounded-md sm:rounded-lg border-2 sm:border-4 border-black">
                 <span className="flex items-center justify-between text-xs sm:text-base">
                   💭{totalComments}
@@ -552,7 +558,7 @@ return (
             </div>
 
             <div className="flex flex-row items-center gap-2">
-              <span className="font-bold min-w-[78px] sm:min-w-[120px] text-xs sm:text-lg">KONTRIBUSI:</span>
+              <span className="font-bold min-w-[78px] sm:min-w-[120px] text-xs sm:text-lg">KONTRIBUSI</span>
               <div className="relative flex-1 bg-sky-300 px-2 py-1 sm:px-4 sm:py-2 rounded-md sm:rounded-lg border-2 sm:border-4 border-black">
                 <span className="flex items-center justify-between text-xs sm:text-base">
                   👍{totalLikes}
@@ -595,7 +601,14 @@ return (
                 <div className="flex items-center gap-2 bg-pink-200 px-2 py-1 md:px-3 md:py-1 rounded-lg border-2 border-black">
                   <Calendar className="w-4 h-4 md:w-5 md:h-5" />
                   <span className="font-semibold text-xs md:text-sm">
-                    {new Date(post.created_at).toLocaleDateString()}
+                    {new Date(post.created_at).toLocaleString("id-ID", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour12: false,
+                    })}
                   </span>
                 </div>
               </div>
