@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "../../utils/supabase";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -33,6 +33,21 @@ const ProfileUser = () => {
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [newBio, setNewBio] = useState("");
   const [bioError, setBioError] = useState("");
+  const usernameInputRef = useRef(null);
+  const bioTextareaRef = useRef(null);
+
+  // Tambahkan useEffect untuk setiap section
+  useEffect(() => {
+    if (isEditingUsername && usernameInputRef.current) {
+      usernameInputRef.current.focus();
+    }
+  }, [isEditingUsername]);
+
+  useEffect(() => {
+    if (isEditingBio && bioTextareaRef.current) {
+      bioTextareaRef.current.focus();
+    }
+  }, [isEditingBio]);
 
 // Fungsi untuk memulai edit bio
 const startEditingBio = () => {
@@ -428,6 +443,7 @@ return (
                 <div className="flex gap-1 sm:gap-2">
                   <input
                     type="text"
+                    ref={usernameInputRef}
                     value={newUsername}
                     onChange={(e) => setNewUsername(e.target.value)}
                     className="flex-1 bg-white px-2 py-1 sm:px-4 sm:py-2 rounded-md sm:rounded-lg border-2 sm:border-4 border-black text-xs sm:text-base"
@@ -477,6 +493,7 @@ return (
                 <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
                   <textarea
                     value={newBio}
+                    ref={bioTextareaRef}
                     onChange={(e) => setNewBio(e.target.value)}
                     className="flex-1 bg-white px-2 py-1 sm:px-4 sm:py-2 rounded-md sm:rounded-lg border-2 sm:border-4 border-black min-h-[60px] text-xs sm:text-base"
                     maxLength={150}
