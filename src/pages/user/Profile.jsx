@@ -30,7 +30,67 @@ const ProfileUser = () => {
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [usernameError, setUsernameError] = useState("");
-  
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [newBio, setNewBio] = useState("");
+  const [bioError, setBioError] = useState("");
+
+// Fungsi untuk memulai edit bio
+const startEditingBio = () => {
+  setNewBio(userData?.bio || "");
+  setIsEditingBio(true);
+  setBioError("");
+};
+
+// Fungsi untuk membatalkan edit bio
+const cancelEditingBio = () => {
+  setIsEditingBio(false);
+  setNewBio("");
+  setBioError("");
+};
+
+// Fungsi untuk menyimpan bio baru
+const saveBio = async () => {
+  if (newBio.length > 150) {
+    setBioError("Bio maksimal 150 karakter");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    
+    const { error } = await supabase
+      .from("users")
+      .update({ bio: newBio })
+      .eq("id", userId);
+
+    if (error) throw error;
+
+    setUserData(prev => ({ ...prev, bio: newBio }));
+    setIsEditingBio(false);
+    setBioError("");
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Berhasil!',
+      text: 'Bio berhasil diperbarui.',
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+  } catch (error) {
+    console.error("Gagal update bio:", error);
+    setBioError(error.message || "Gagal memperbarui bio");
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: error.message || 'Gagal memperbarui bio',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 // Fungsi untuk memulai edit username
   const startEditingUsername = () => {
     setNewUsername(userData?.username || "");
@@ -407,6 +467,57 @@ return (
             )}
           </div>
 
+<div className="flex items-start gap-2">
+  <span className="font-bold min-w-[100px] sm:min-w-[120px] text-lg">BIO:</span>
+  {isEditingBio ? (
+    <div className="flex-1 flex flex-col">
+      <div className="flex gap-2">
+        <textarea
+          value={newBio}
+          onChange={(e) => setNewBio(e.target.value)}
+          className="flex-1 bg-white px-4 py-2 rounded-lg border-4 border-black min-h-[100px]"
+          maxLength={150}
+          placeholder="Tulis bio kamu..."
+        />
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={saveBio}
+            className="bg-green-500 text-white p-2 rounded-lg border-4 border-black hover:bg-green-600"
+            disabled={loading}
+          >
+            <Save className="w-5 h-5" />
+          </button>
+          <button
+            onClick={cancelEditingBio}
+            className="bg-red-500 text-white p-2 rounded-lg border-4 border-black hover:bg-red-600"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+      {bioError && (
+        <span className="text-red-500 text-sm mt-1">{bioError}</span>
+      )}
+      <span className="text-sm text-gray-600 text-right">
+        {newBio.length}/150 karakter
+      </span>
+    </div>
+  ) : (
+    <div className="flex-1 flex flex-col gap-2">
+      <div className="flex-1 bg-white px-4 py-2 rounded-lg border-4 border-black min-h-[100px] whitespace-pre-wrap">
+        {userData?.bio || 'Belum ada bio...'}
+      </div>
+      {authUser?.id === userId && (
+        <button
+          onClick={startEditingBio}
+          className="self-end bg-yellow-300 p-2 rounded-lg border-4 border-black hover:bg-yellow-400"
+        >
+          <Edit className="w-5 h-5" />
+        </button>
+      )}
+    </div>
+  )}
+</div>
 
           <div className="relative group flex items-center gap-2">
             <span className="font-bold min-w-[100px] sm:min-w-[120px] text-lg">POPULARITAS:</span>
