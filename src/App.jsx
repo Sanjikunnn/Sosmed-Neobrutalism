@@ -82,25 +82,32 @@ function NewsFeedSection() {
 // Komponen Suggestions (saran teman)
 function SuggestionsSection() {
   const names = ['Aulia', 'Bima', 'Iqbal'];
+
   return (
     <section className="w-full mt-8">
       <h2 className="text-3xl font-bold mb-4">👥 Suggestions</h2>
       <div className="grid md:grid-cols-3 gap-6">
         {names.map((name, index) => (
-          <div key={index} className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] rounded-lg text-center">
+          <div
+            key={index}
+            className="bg-white p-4 border-4 border-black shadow-[6px_6px_0_0_black] rounded-lg text-center"
+          >
             <img
-              src={`https://i.pravatar.cc/100?img=${index + 20}`}
+              src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`}
               alt={name}
-              className="mx-auto rounded-full w-16 h-16 mb-2"
+              className="mx-auto rounded-full w-16 h-16 mb-2 border-2 border-black"
             />
             <h3 className="font-bold text-black">{name}</h3>
-            <button className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-4 mt-2 rounded-full transition">Follow</button>
+            <button className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-4 mt-2 rounded-full transition">
+              Follow
+            </button>
           </div>
         ))}
       </div>
     </section>
   );
 }
+
 
 
 // Komponen Trending (trending topik)
