@@ -319,7 +319,7 @@ return (
 <div className="bg-yellow-100 p-4 shadow-[4px_4px_0px_#000] border-2 border-black">
   <div className="flex justify-between items-center mb-3">
     <div className="font-bold text-lg">
-      <Link to={`/user/profile/${user.id}`} className="hover:text-pink-600 underline underline-offset-4">
+      <Link to={`/user/profile/${user.id}`} className="text-black font-bold hover:text-pink-600 underline underline-offset-4">
         <img
           src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.username}`}
           className="w-8 h-8 inline-block mr-2 border-2 border-black"
@@ -371,7 +371,7 @@ return (
               <strong>
                 <Link
                   to={`/user/profile/${comment.users?.id}`}
-                  className="hover:text-pink-600 underline underline-offset-4"
+                  className="text-black hover:text-pink-600 underline underline-offset-4"
                 >
                   <img
                     src={`https://api.dicebear.com/7.x/initials/svg?seed=${comment.users?.username}`}

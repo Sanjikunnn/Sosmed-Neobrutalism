@@ -7,13 +7,32 @@ const withAuth = (Component) => {
     const navigate = useNavigate();
 
     useEffect(() => {
+      let interval;
+
       const checkAuth = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          navigate('/login'); // arahkan ke halaman login
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
+        if (error || !session || !session.user) {
+          navigate('/login'); // ke halaman login kalau ga ada session
+        } else {
+          const now = Math.floor(Date.now() / 1000); // waktu sekarang dalam detik
+          if (session.expires_at && session.expires_at < now) {
+            await supabase.auth.signOut(); // keluarin user
+            navigate('/login');
+          }
         }
       };
-      checkAuth();
+
+      checkAuth(); // cek langsung waktu pertama kali
+
+      // Cek tiap 1 menit (bisa kamu sesuaikan waktunya)
+      interval = setInterval(checkAuth, 60000);
+
+      // Bersihin interval waktu komponen dibuang
+      return () => clearInterval(interval);
     }, [navigate]);
 
     return <Component {...props} />;

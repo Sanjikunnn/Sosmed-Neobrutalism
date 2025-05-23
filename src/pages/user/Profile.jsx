@@ -11,9 +11,11 @@ import {
 import withAuth from "../../middleware/withAuth";
 import { 
   Heart, MessageSquare, User, Calendar, ChevronDown, ChevronUp, 
-  Mail, Frown, Lock 
+  Mail, Frown, Lock, Edit, Save, X  
 } from "lucide-react";
 import { useParams } from "react-router-dom";
+import Swal from 'sweetalert2';
+
 
 const ProfileUser = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -25,8 +27,87 @@ const ProfileUser = () => {
   const [error, setError] = useState(null);
   const [expandedPosts, setExpandedPosts] = useState([]);
   const { userId } = useParams();
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  
+// Fungsi untuk memulai edit username
+  const startEditingUsername = () => {
+    setNewUsername(userData?.username || "");
+    setIsEditingUsername(true);
+    setUsernameError("");
+  };
 
-const toggleReadMore = (postId) => {
+  // Fungsi untuk membatalkan edit
+  const cancelEditingUsername = () => {
+    setIsEditingUsername(false);
+    setNewUsername("");
+    setUsernameError("");
+  };
+
+// Fungsi untuk menyimpan username baru
+const saveUsername = async () => {
+  if (!newUsername.trim()) {
+    setUsernameError("Username tidak boleh kosong");
+    return;
+  }
+
+  if (newUsername.length > 20) {
+    setUsernameError("Username maksimal 20 karakter");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    
+    const { error: updateError } = await supabase
+      .from("users")
+      .update({ username: newUsername })
+      .eq("id", userId);
+
+    if (updateError) throw updateError;
+
+    const { data: userPosts, error: postsError } = await supabase
+      .from("posts")
+      .select("id")
+      .eq("id_user", userId);
+
+    if (postsError) throw postsError;
+
+    setUserData(prev => ({ ...prev, username: newUsername }));
+    setPosts(prev => prev.map(post => ({
+      ...post,
+      users: { ...post.users, username: newUsername }
+    })));
+
+    setIsEditingUsername(false);
+    setUsernameError("");
+
+    // Swal berhasil
+    Swal.fire({
+      icon: 'success',
+      title: 'Berhasil!',
+      text: 'Username berhasil diperbarui.',
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+  } catch (error) {
+    console.error("Gagal update username:", error);
+    setUsernameError(error.message || "Gagal memperbarui username");
+
+    // Swal gagal
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: error.message || 'Gagal memperbarui username',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const toggleReadMore = (postId) => {
   if (expandedPosts.includes(postId)) {
     setExpandedPosts(expandedPosts.filter(id => id !== postId));
   } else {
@@ -281,10 +362,51 @@ return (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <span className="font-bold min-w-[100px] sm:min-w-[120px] text-lg">USERNAME:</span>
-            <span className="flex-1 bg-white px-4 py-2 rounded-lg border-4 border-black">
-              {userData.username || '❌ ANONIM'}
-            </span>
+            {isEditingUsername ? (
+              <div className="flex-1 flex flex-col">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newUsername}
+                    onChange={(e) => setNewUsername(e.target.value)}
+                    className="flex-1 bg-white px-4 py-2 rounded-lg border-4 border-black"
+                    maxLength={20}
+                  />
+                  <button
+                    onClick={saveUsername}
+                    className="bg-green-500 text-white p-2 rounded-lg border-4 border-black hover:bg-green-600"
+                    disabled={loading}
+                  >
+                    <Save className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={cancelEditingUsername}
+                    className="bg-red-500 text-white p-2 rounded-lg border-4 border-black hover:bg-red-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                {usernameError && (
+                  <span className="text-red-500 text-sm mt-1">{usernameError}</span>
+                )}
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center gap-2">
+                <span className="flex-1 bg-white px-4 py-2 rounded-lg border-4 border-black">
+                  {userData?.username || '❌ ANONIM'}
+                </span>
+                {authUser?.id === userId && (
+                  <button
+                    onClick={startEditingUsername}
+                    className="bg-yellow-300 p-2 rounded-lg border-4 border-black hover:bg-yellow-400"
+                  >
+                    <Edit className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
+
 
           <div className="relative group flex items-center gap-2">
             <span className="font-bold min-w-[100px] sm:min-w-[120px] text-lg">POPULARITAS:</span>
