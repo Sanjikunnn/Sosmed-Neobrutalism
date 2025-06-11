@@ -1,20 +1,18 @@
-# 🧃 Sosmed Neobrutalism – React + Vite
+# 🧃 Sosmed Neobrutalism – React + Vite + Supabase
 
-Yo! Selamat datang di **Sosmed Neobrutalism**, proyek keren dengan vibes **neobrutalism UI** yang nyentrik tapi tetap estetik. Dibangun pakai **React + Vite**, super ringan & cepet! ⚡
-
-> 🧠 Udah di-mix sama Tailwind, Vite, React, dan (kalau mau) Supabase juga bisa langsung connect buat backend-nya.
+Selamat datang di **Sosmed Neobrutalism**, proyek gabut dengan vibes **neobrutalism UI** yang nyentrik tapi tetap estetik. Dibuat pake **React + Supabase**, super ringan & cepet! ⚡
 
 ---
 
-## 💎 Fitur-fitur yang Bikin Kamu Makin Keren
+## 💎 Fitur-fitur yang Ada Disini
 
-- ⚛️ **React 18** – UI modern dan kekinian
-- ⚡ **Vite** – Build ngebut parah
-- 💅 **Tailwind CSS** – Styling tinggal ketik, gak pake ribet
-- 🔁 **Fast Refresh** – Ngoding tanpa takut ilangin state
-- 🧼 **ESLint** – Auto bantuin kodingan kamu tetep rapi
-- 🛠️ **Supabase Ready** – Kalo butuh backend tinggal connect
-- 🎨 **Desain Neobrutalism** – Estetik yang gak pasaran
+- ⚛️ **Halaman Daftar** – Ya fungsinya buat daftar akun ya pake email otomatis tar u dapet kodenya
+- ⚡ **Halaman Login** – Login pake email & password yg udh lu daftarin tadi, ga autocomplete ya, biar ingetan lu makin kuat
+- 💅 **Halaman Home** – Ya kaya Fesnuk intinya, Disini lu bisa posting status, nontonin status orang laen, bisa lu like, komen & subscribe anjay kek yutub ae maderfaked, (boong ko gada subs)
+- 🛠️ **Halaman Profile** – Ini halaman buat nampilin profil user sih kek fesnuk gitu lah, ya semua kek fesnuk karna gw fesnuk lovers
+- 🧼 **ESLint** – Auto bantuin kodingan kamu tetep rapi (gaguna si)
+- 🛠️ **Supabase Ready** – Buat backend sama database jadi tinggal connect ae bray
+- 🎨 **Desain Neobrutalism** – Estetik yang gak pasaran, gak ada di pasar malah
 
 ---
 
