@@ -159,19 +159,19 @@ npm run dev
 Berikut beberapa cuplikan dari tampilan aplikasinya. Desainnya clean dengan vibes **neobrutalism** yang bold tapi tetap aesthetic ✨:
 
 ### 🏠 Status Bar & Navbar
-![Status Bar & Navbar](https://imgur.com/diIwq2K)
+![Status Bar & Navbar](https://imgur.com/diIwq2K.png)
 
 ### 👤 Postingan
-![Postingan](https://imgur.com/sIqMJHE)
+![Postingan](https://imgur.com/sIqMJHE.png)
 
 ### 📝 Komentar
-![Komentar](https://imgur.com/8B7YmVu)
+![Komentar](https://imgur.com/8B7YmVu.png)
 
 ### 👤 Halaman Profil
-![Halaman Profil](https://imgur.com/VRFVU2P)
+![Halaman Profil](https://imgur.com/VRFVU2P.png)
 
 ### 👤 Komentar & Postingan User di Halaman Profil
-![Komentar & Postingan User di Halaman Profil](https://imgur.com/uNnbpk1)
+![Komentar & Postingan User di Halaman Profil](https://imgur.com/uNnbpk1.png)
 
 
 ---
