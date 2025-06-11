@@ -1,6 +1,7 @@
 # ⚡ Sosmed Neobrutalism – React + Vite
 
-Welcome to **Sosmed Neobrutalism**, a minimalist yet bold frontend built using **React + Vite**. Mengusung desain **neobrutalism** yang mencolok namun tetap elegan. 🚀
+Welcome to **Sosmed Neobrutalism**, a minimalist yet bold frontend built using **React + Vite**. 
+Mengusung desain **neobrutalism** yang mencolok namun tetap elegan. 🚀
 
 > 🔥 Powered by Vite for blazing fast development, React for dynamic UIs, and styled with TailwindCSS.
 
