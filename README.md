@@ -152,6 +152,34 @@ npm run dev
 
 ---
 
+---
+
+## 📸 Preview
+
+Berikut beberapa cuplikan dari tampilan aplikasinya. Desainnya clean dengan vibes **neobrutalism** yang bold tapi tetap aesthetic ✨:
+
+### 🏠 Status Bar & Navbar
+![Status Bar & Navbar](https://imgur.com/diIwq2K)
+
+### 👤 Postingan
+![Postingan](https://imgur.com/sIqMJHE)
+
+### 📝 Komentar
+![Komentar](https://imgur.com/8B7YmVu)
+
+### 👤 Halaman Profil
+![Halaman Profil](https://imgur.com/VRFVU2P)
+
+### 👤 Komentar & Postingan User di Halaman Profil
+![Komentar & Postingan User di Halaman Profil](https://imgur.com/uNnbpk1)
+
+
+---
+
+
+
+---
+
 ## 🙋‍♂️ Author
 
 Dibuat dengan 💙 sama [@Sanjikunnn](https://github.com/Sanjikunnn)  
