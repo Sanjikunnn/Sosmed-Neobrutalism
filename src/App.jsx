@@ -2,7 +2,7 @@ import './App.css';
 import { FaPlus, FaRegCommentDots, FaUserFriends, FaCompass, FaBell, FaHashtag } from 'react-icons/fa';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
+import React from 'react';
 
 // Import halaman kebijakan privasi dan syarat ketentuan
 import PrivacyPolicy from './pages/privacyPolicy';
@@ -15,7 +15,7 @@ import Profile from './pages/user/Profile';
 
 // Import halaman auth
 import Login from './pages/auth/Login';
-import Signup from './pages/auth/Signup';
+import Signup from './pages/auth/SignUp';
 
 // Komponen utama aplikasi
 function App() {
