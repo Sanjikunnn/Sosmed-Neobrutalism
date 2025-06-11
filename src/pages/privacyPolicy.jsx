@@ -2,8 +2,8 @@ import { ShieldCheck, Lock, Info } from "lucide-react";
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brutalYellow via-pink-100 to-white py-12">
-      <div className="max-w-4xl mx-auto p-6 md:p-12 bg-white rounded-2xl shadow-lg border-4 border-brutalPink">
+    <div className="min-h-screen bg-gradient-to-br from-brutalYellow via-pink-100 to-white p-5">
+      <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-lg border-4 border-brutalPink">
         <div className="mb-8">
           <h1 className="text-3xl font-extrabold text-pink-700 flex items-center gap-2 font-brutal">
             <ShieldCheck className="w-7 h-7" /> Privacy Policy
@@ -13,7 +13,7 @@ export default function PrivacyPolicy() {
           </p>
         </div>
 
-        <section className="mb-8">
+        <section className="mb-8 text-sm text-gray-500 mt-1">
           <h2 className="text-xl font-semibold mb-2 flex items-center gap-2 text-pink-600 font-brutal">
             <Lock className="w-5 h-5" /> Data yang Kami Kumpulkan
           </h2>
@@ -25,7 +25,7 @@ export default function PrivacyPolicy() {
           </p>
         </section>
 
-        <section className="mb-8">
+        <section className="mb-8 text-sm text-gray-500 mt-1">
           <h2 className="text-xl font-semibold mb-2 flex items-center gap-2 text-pink-600 font-brutal">
             <Lock className="w-5 h-5" /> Keamanan Data
           </h2>
@@ -36,7 +36,7 @@ export default function PrivacyPolicy() {
           </p>
         </section>
 
-        <section className="mb-8">
+        <section className="mb-8 text-sm text-gray-500 mt-1">
           <h2 className="text-xl font-semibold mb-2 flex items-center gap-2 text-pink-600 font-brutal">
             <Info className="w-5 h-5" /> Penggunaan Data
           </h2>
@@ -51,7 +51,7 @@ export default function PrivacyPolicy() {
           </ul>
         </section>
 
-        <section className="mb-8">
+        <section className="mb-8 text-sm text-gray-500 mt-1">
           <h2 className="text-xl font-semibold mb-2 flex items-center gap-2 text-pink-600 font-brutal">
             🤝 Persetujuan Anda
           </h2>
