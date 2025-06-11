@@ -1,87 +1,86 @@
-# ⚡ Sosmed Neobrutalism – React + Vite
+# 🧃 Sosmed Neobrutalism – React + Vite
 
-Welcome to **Sosmed Neobrutalism**, a minimalist yet bold frontend built using **React + Vite**.  
-Mengusung desain **neobrutalism** yang mencolok namun tetap elegan. 🚀
+Yo! Selamat datang di **Sosmed Neobrutalism**, proyek keren dengan vibes **neobrutalism UI** yang nyentrik tapi tetap estetik. Dibangun pakai **React + Vite**, super ringan & cepet! ⚡
 
-> 🔥 Powered by Vite for blazing fast development, React for dynamic UIs, and styled with TailwindCSS.
-
----
-
-## ✨ Fitur Utama
-
-- ⚛️ **React 18** – Komponen dinamis dan modern
-- ⚡ **Vite** – Development server super cepat
-- 💨 **Tailwind CSS** – Styling praktis dan konsisten
-- 🔁 **Fast Refresh** – Auto reload tanpa kehilangan state
-- 🧹 **ESLint** – Linter siap pakai biar kodingan tetap bersih
-- 🔐 **Supabase (opsional)** – Realtime backend dan autentikasi
-- 🎨 **Desain Neobrutalism** – Gaya UI yang nyentrik dan beda
+> 🧠 Udah di-mix sama Tailwind, Vite, React, dan (kalau mau) Supabase juga bisa langsung connect buat backend-nya.
 
 ---
 
-## 🛠️ Stack Teknologi
+## 💎 Fitur-fitur yang Bikin Kamu Makin Keren
 
-| Tech         | Deskripsi                            |
-|--------------|----------------------------------------|
-| React        | Framework utama UI                    |
-| Vite         | Development server + bundler          |
-| Tailwind CSS | Styling responsif berbasis utility    |
-| ESLint       | Untuk menjaga konsistensi koding      |
-| Supabase     | (Opsional) BaaS untuk backend dan DB  |
-| SweetAlert2  | Alert cantik dan interaktif           |
+- ⚛️ **React 18** – UI modern dan kekinian
+- ⚡ **Vite** – Build ngebut parah
+- 💅 **Tailwind CSS** – Styling tinggal ketik, gak pake ribet
+- 🔁 **Fast Refresh** – Ngoding tanpa takut ilangin state
+- 🧼 **ESLint** – Auto bantuin kodingan kamu tetep rapi
+- 🛠️ **Supabase Ready** – Kalo butuh backend tinggal connect
+- 🎨 **Desain Neobrutalism** – Estetik yang gak pasaran
 
 ---
 
-## 📁 Struktur Folder
+## 🛠️ Stack Tech-nya Nih
+
+| Teknologi     | Fungsi Kerennya                  |
+|---------------|----------------------------------|
+| React         | Framework UI utama               |
+| Vite          | Dev server & bundler kilat       |
+| Tailwind CSS  | Buat styling kece & konsisten    |
+| ESLint        | Linter biar koding tetep rapi    |
+| Supabase      | (Opsional) Backend & DB instan   |
+| SweetAlert2   | Buat pop-up alert cantik banget  |
+
+---
+
+## 🗂️ Folder Structure-nya
 
 ```txt
 sosmed-neobrutalism/
 ├── public/                 # File publik
 ├── src/
-│   ├── assets/             # Gambar, ikon, dll
-│   ├── components/         # Komponen UI reusable (Header, Footer, dsb)
-│   ├── middleware/         # HOC seperti withAuth
-│   ├── pages/              # Komponen level halaman
-│   ├── utils/              # Fungsi utilitas seperti konfigurasi Supabase
-│   ├── App.jsx             # Root component
-│   └── main.jsx            # Entry point aplikasi
-├── .eslintrc.cjs           # Konfigurasi ESLint
-├── index.html              # Template HTML
-├── package.json            # Dependency dan scripts
-├── vite.config.js          # Konfigurasi Vite
-└── tailwind.config.js      # Konfigurasi Tailwind
+│   ├── assets/             # Gambar, ikon, dsb
+│   ├── components/         # UI parts kayak Header, dsb
+│   ├── middleware/         # Middleware kaya withAuth
+│   ├── pages/              # Halaman utama
+│   ├── utils/              # Function helper & config
+│   ├── App.jsx             # Komponen utama
+│   └── main.jsx            # Entry point app
+├── .eslintrc.cjs           # Config ESLint
+├── index.html              # HTML base-nya
+├── package.json            # Dependency & script
+├── vite.config.js          # Vite config
+└── tailwind.config.js      # Tailwind setup
 ```
 
 ---
 
-## 📊 Struktur Database Supabase
+## 🧬 Struktur DB Supabase
 
-### 🧑‍💻 Tabel `users`
+### 🔐 Tabel `users`
 
-| Kolom      | Tipe Data               | Default              | Keterangan          |
-|------------|-------------------------|----------------------|---------------------|
-| id         | UUID (PK)              | `gen_random_uuid()`  | ID unik pengguna    |
-| username   | Varchar (nullable)      | `'null'`             | Nama pengguna       |
-| badge      | Varchar (nullable)      | `'null'`             | Badge/status        |
-| bio        | Varchar (nullable)      | `'null'`             | Bio profil          |
-| email      | Varchar                 | -                    | Email pengguna      |
-| password   | Varchar (nullable)      | -                    | Password hash       |
-| created_at | Timestamp with timezone | `now()`              | Tanggal dibuat      |
+| Kolom      | Tipe Data               | Default              | Keterangan               |
+|------------|-------------------------|----------------------|--------------------------|
+| id         | UUID (PK)              | `gen_random_uuid()`  | ID user unik             |
+| username   | Varchar (nullable)      | `'null'`             | Nama user                |
+| badge      | Varchar (nullable)      | `'null'`             | Badge atau status        |
+| bio        | Varchar (nullable)      | `'null'`             | Bio singkat              |
+| email      | Varchar                 | -                    | Email user               |
+| password   | Varchar (nullable)      | -                    | Password (di-hash)       |
+| created_at | Timestamp with timezone | `now()`              | Tanggal daftar           |
 
 ---
 
-### 📝 Tabel `posts`
+### 📮 Tabel `posts`
 
-| Kolom         | Tipe Data               | Default            | Keterangan               |
-|---------------|-------------------------|--------------------|---------------------------|
-| id            | Bigint (PK)             | Auto increment     | ID post                  |
-| content       | Text                    | `''`               | Isi post                 |
-| id_user       | UUID                    | `gen_random_uuid()`| Referensi ke `users`     |
-| like_count    | Bigint                  | `0`                | Jumlah likes             |
-| comment_count | Bigint (nullable)       | -                  | Jumlah komentar          |
-| created_at    | Timestamp with timezone | `now()`            | Tanggal post dibuat      |
+| Kolom         | Tipe Data               | Default             | Keterangan               |
+|---------------|-------------------------|---------------------|--------------------------|
+| id            | Bigint (PK)             | Auto increment      | ID post                  |
+| content       | Text                    | `''`                | Isi post                 |
+| id_user       | UUID                    | `gen_random_uuid()` | Link ke tabel users      |
+| like_count    | Bigint                  | `0`                 | Total likes              |
+| comment_count | Bigint (nullable)       | -                   | Total komentar           |
+| created_at    | Timestamp with timezone | `now()`             | Tanggal posting          |
 
-🔗 **Foreign Key**:  
+🧷 Relasi:  
 `id_user` → `users(id)`
 
 ---
@@ -90,18 +89,18 @@ sosmed-neobrutalism/
 
 | Kolom      | Tipe Data               | Default              | Keterangan                  |
 |------------|-------------------------|----------------------|------------------------------|
-| id         | Bigint (PK)             | Auto increment       | ID komentar                  |
-| post_id    | Bigint                  | `'8'`                | Referensi ke post            |
-| content    | Text                    | `'null'`             | Isi komentar                 |
-| id_user    | UUID                    | `gen_random_uuid()`  | Referensi ke `users`         |
-| created_at | Timestamp with timezone | `now()`              | Tanggal komentar dibuat      |
+| id         | Bigint (PK)             | Auto increment       | ID komen                    |
+| post_id    | Bigint                  | `'8'`                | Link ke post                |
+| content    | Text                    | `'null'`             | Isi komentar                |
+| id_user    | UUID                    | `gen_random_uuid()`  | Link ke user yang komen     |
+| created_at | Timestamp with timezone | `now()`              | Tanggal komen               |
 
-🔗 **Foreign Key**:
+🧷 Relasi:
 - `post_id` → `posts(id)`
 - `id_user` → `users(id)`
 
-⚡ **Trigger**:
-- `trg_update_comment_count`: Update jumlah komentar saat komentar ditambah/dihapus
+⚡ Trigger:
+- `trg_update_comment_count` – Otomatis update jumlah komentar
 
 ---
 
@@ -110,47 +109,46 @@ sosmed-neobrutalism/
 | Kolom      | Tipe Data               | Default              | Keterangan                  |
 |------------|-------------------------|----------------------|------------------------------|
 | id         | Bigint (PK)             | Auto increment       | ID like                     |
-| post_id    | Bigint                  | `'8'`                | Referensi ke post           |
-| id_user    | UUID                    | `gen_random_uuid()`  | Referensi ke `users`        |
-| created_at | Timestamp with timezone | `now()`              | Tanggal like dibuat         |
+| post_id    | Bigint                  | `'8'`                | Link ke post                |
+| id_user    | UUID                    | `gen_random_uuid()`  | Link ke user yang like      |
+| created_at | Timestamp with timezone | `now()`              | Tanggal nge-like            |
 
-🔗 **Foreign Key**:
+🧷 Relasi:
 - `post_id` → `posts(id)`
 - `id_user` → `users(id)`
 
-⚡ **Trigger**:
-- `trg_like_added`: Update like count saat like ditambahkan
-- `trg_like_removed`: Update like count saat like dihapus
+⚡ Trigger:
+- `trg_like_added` – Naikin counter like otomatis
+- `trg_like_removed` – Nurunin counter like otomatis
 
 ---
 
-🗂 Semua tabel berada dalam **namespace `public`**, dan telah dilengkapi foreign key serta trigger otomatis.
-
-📌 Pastikan PostgreSQL Extension `pgcrypto` aktif agar `gen_random_uuid()` bisa berjalan dengan lancar di Supabase.
+> Semua tabel ada di schema `public`.  
+> Jangan lupa aktifin `pgcrypto` di Supabase biar `gen_random_uuid()` bisa jalan gas pol ⚙️
 
 ---
 
-## 🚀 Cara Menjalankan Proyek
+## 🏁 Cara Running Proyek-nya
 
 ```bash
-# 1. Clone repositori
+# 1. Clone repo ini dulu
 git clone https://github.com/Sanjikunnn/Sosmed-Neobrutalism.git
 cd Sosmed-Neobrutalism
 
-# 2. Install dependencies
+# 2. Install semua package
 npm install
 
-# 3. Buat file .env dan isi Supabase config
+# 3. Bikin file .env dan isi ini:
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 
-# 4. Jalankan development server
+# 4. Start development mode
 npm run dev
 ```
 
 ---
 
-## 👤 Author
+## 🙋‍♂️ Author
 
-Made with ❤️ by [@Sanjikunnn](https://github.com/Sanjikunnn)  
-Feel free to fork & contribute!
+Dibuat dengan 💙 sama [@Sanjikunnn](https://github.com/Sanjikunnn)  
+Jangan malu-malu buat fork, kasih bintang, atau collab bareng 😎
