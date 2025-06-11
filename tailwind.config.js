@@ -14,8 +14,9 @@ export default {
         brutalYellow: '#ffee00',
       },
       fontFamily: {
-        brutal: ['"Comic Neue"', 'cursive']
-      }
+        // Ganti font jadi lebih gen-z & brutalist style
+        brutal: ['"Rubik Mono One"', 'sans-serif'],
+      },
     },
   },
   plugins: [],

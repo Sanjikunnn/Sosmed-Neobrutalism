@@ -111,30 +111,56 @@ const UserHome = () => {
   }, [currentUser, newPost]);
 
   const handlePostLike = useCallback(async (postId) => {
-    if (!currentUser) return Swal.fire({ icon: 'error', title: 'Login dahulu ya!' });
+  if (!currentUser) {
+    return Swal.fire({
+      icon: 'error',
+      title: 'Login dulu yuk!',
+    });
+  }
 
-    try {
-      const { data: existingLike } = await supabase
-        .from('posts_likes')
-        .select('*')
-        .eq('post_id', postId)
-        .eq('id_user', currentUser.id)
-        .maybeSingle();
+  try {
+    const { data: existingLike } = await supabase
+      .from('posts_likes')
+      .select('*')
+      .eq('post_id', postId)
+      .eq('id_user', currentUser.id)
+      .maybeSingle();
 
-      if (existingLike) {
-        Swal.fire({ icon: 'info', title: 'Kamu sudah menyukai postingan ini' });
-        return;
-      }
-
-      const { error } = await supabase
-        .from('posts_likes')
-        .insert([{ post_id: postId, id_user: currentUser.id, created_at: new Date().toISOString() }]);
-
-      if (!error) setRefreshTrigger(prev => prev + 1);
-    } catch (error) {
-      console.error('Like error:', error);
+    if (existingLike) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Kamu udah like postingan ini 👀',
+      });
+      return;
     }
-  }, [currentUser]);
+
+    const { error } = await supabase
+      .from('posts_likes')
+      .insert([{
+        post_id: postId,
+        id_user: currentUser.id,
+        created_at: new Date().toISOString(),
+      }]);
+
+    if (!error) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Post berhasil dilike! ❤️',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      setRefreshTrigger(prev => prev + 1);
+    }
+  } catch (error) {
+    console.error('Like error:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Gagal like postingan 😢',
+      text: error.message,
+    });
+  }
+}, [currentUser]);
+
 
   const handleCommentSubmit = useCallback(async (postId, comment) => {
     if (!currentUser || !comment.trim()) return;
