@@ -1,6 +1,6 @@
 # ⚡ Sosmed Neobrutalism – React + Vite
 
-Welcome to **Sosmed Neobrutalism**, a minimalist yet bold frontend built using **React + Vite**. 
+Welcome to **Sosmed Neobrutalism**, a minimalist yet bold frontend built using **React + Vite**.  
 Mengusung desain **neobrutalism** yang mencolok namun tetap elegan. 🚀
 
 > 🔥 Powered by Vite for blazing fast development, React for dynamic UIs, and styled with TailwindCSS.
@@ -21,14 +21,14 @@ Mengusung desain **neobrutalism** yang mencolok namun tetap elegan. 🚀
 
 ## 🛠️ Stack Teknologi
 
-| Tech         | Deskripsi                           |
-|--------------|--------------------------------------|
-| React        | Framework utama UI                  |
-| Vite         | Development server + bundler        |
-| Tailwind CSS | Styling responsif berbasis utility  |
-| ESLint       | Untuk menjaga konsistensi koding    |
-| Supabase     | (Opsional) BaaS untuk backend dan DB|
-| SweetAlert2  | Alert cantik dan interaktif         |
+| Tech         | Deskripsi                            |
+|--------------|----------------------------------------|
+| React        | Framework utama UI                    |
+| Vite         | Development server + bundler          |
+| Tailwind CSS | Styling responsif berbasis utility    |
+| ESLint       | Untuk menjaga konsistensi koding      |
+| Supabase     | (Opsional) BaaS untuk backend dan DB  |
+| SweetAlert2  | Alert cantik dan interaktif           |
 
 ---
 
@@ -56,80 +56,79 @@ sosmed-neobrutalism/
 
 ## 📊 Struktur Database Supabase
 
-Berikut ini adalah struktur tabel yang digunakan pada proyek ini:
-
 ### 🧑‍💻 Tabel `users`
 
-| Kolom      | Tipe Data                 | Default                | Keterangan          |
-|------------|---------------------------|------------------------|----------------------|
-| id         | UUID (PK)                | `gen_random_uuid()`    | ID unik pengguna    |
-| username   | Varchar (nullable)        | `'null'`               | Nama pengguna       |
-| badge      | Varchar (nullable)        | `'null'`               | Badge/status        |
-| bio        | Varchar (nullable)        | `'null'`               | Bio profil          |
-| email      | Varchar                   | -                      | Email pengguna      |
-| password   | Varchar (nullable)        | -                      | Password hash       |
-| created_at | Timestamp with timezone   | `now()`                | Tanggal dibuat      |
+| Kolom      | Tipe Data               | Default              | Keterangan          |
+|------------|-------------------------|----------------------|---------------------|
+| id         | UUID (PK)              | `gen_random_uuid()`  | ID unik pengguna    |
+| username   | Varchar (nullable)      | `'null'`             | Nama pengguna       |
+| badge      | Varchar (nullable)      | `'null'`             | Badge/status        |
+| bio        | Varchar (nullable)      | `'null'`             | Bio profil          |
+| email      | Varchar                 | -                    | Email pengguna      |
+| password   | Varchar (nullable)      | -                    | Password hash       |
+| created_at | Timestamp with timezone | `now()`              | Tanggal dibuat      |
 
 ---
 
 ### 📝 Tabel `posts`
 
-| Kolom         | Tipe Data                 | Default           | Keterangan                |
-|---------------|---------------------------|-------------------|----------------------------|
-| id            | Bigint (PK)               | Auto increment    | ID post                   |
-| content       | Text                      | `''`              | Isi post                  |
-| id_user       | UUID                      | `gen_random_uuid()`| Referensi ke `users`      |
-| like_count    | Bigint                    | `0`               | Jumlah likes              |
-| comment_count | Bigint (nullable)         | -                 | Jumlah komentar           |
-| created_at    | Timestamp with timezone   | `now()`           | Tanggal post dibuat       |
+| Kolom         | Tipe Data               | Default            | Keterangan               |
+|---------------|-------------------------|--------------------|---------------------------|
+| id            | Bigint (PK)             | Auto increment     | ID post                  |
+| content       | Text                    | `''`               | Isi post                 |
+| id_user       | UUID                    | `gen_random_uuid()`| Referensi ke `users`     |
+| like_count    | Bigint                  | `0`                | Jumlah likes             |
+| comment_count | Bigint (nullable)       | -                  | Jumlah komentar          |
+| created_at    | Timestamp with timezone | `now()`            | Tanggal post dibuat      |
 
-🔗 Foreign Key:
-- `id_user` → `users(id)`
+🔗 **Foreign Key**:  
+`id_user` → `users(id)`
 
 ---
 
 ### 💬 Tabel `comments`
 
-| Kolom      | Tipe Data                 | Default               | Keterangan                  |
-|------------|---------------------------|------------------------|------------------------------|
-| id         | Bigint (PK)               | Auto increment         | ID komentar                  |
-| post_id    | Bigint                    | `'8'`                  | Referensi ke post            |
-| content    | Text                      | `'null'`               | Isi komentar                 |
-| id_user    | UUID                      | `gen_random_uuid()`    | Referensi ke `users`         |
-| created_at | Timestamp with timezone   | `now()`                | Tanggal komentar dibuat      |
+| Kolom      | Tipe Data               | Default              | Keterangan                  |
+|------------|-------------------------|----------------------|------------------------------|
+| id         | Bigint (PK)             | Auto increment       | ID komentar                  |
+| post_id    | Bigint                  | `'8'`                | Referensi ke post            |
+| content    | Text                    | `'null'`             | Isi komentar                 |
+| id_user    | UUID                    | `gen_random_uuid()`  | Referensi ke `users`         |
+| created_at | Timestamp with timezone | `now()`              | Tanggal komentar dibuat      |
 
-🔗 Foreign Key:
+🔗 **Foreign Key**:
 - `post_id` → `posts(id)`
 - `id_user` → `users(id)`
 
-⚡ Trigger:
-- `trg_update_comment_count`: Memperbarui jumlah komentar di `posts` saat komentar ditambah/dihapus/dipindah
+⚡ **Trigger**:
+- `trg_update_comment_count`: Update jumlah komentar saat komentar ditambah/dihapus
 
 ---
 
 ### ❤️ Tabel `posts_likes`
 
-| Kolom      | Tipe Data                 | Default               | Keterangan                  |
-|------------|---------------------------|------------------------|------------------------------|
-| id         | Bigint (PK)               | Auto increment         | ID like                     |
-| post_id    | Bigint                    | `'8'`                  | Referensi ke post           |
-| id_user    | UUID                      | `gen_random_uuid()`    | Referensi ke `users`        |
-| created_at | Timestamp with timezone   | `now()`                | Tanggal like dibuat         |
+| Kolom      | Tipe Data               | Default              | Keterangan                  |
+|------------|-------------------------|----------------------|------------------------------|
+| id         | Bigint (PK)             | Auto increment       | ID like                     |
+| post_id    | Bigint                  | `'8'`                | Referensi ke post           |
+| id_user    | UUID                    | `gen_random_uuid()`  | Referensi ke `users`        |
+| created_at | Timestamp with timezone | `now()`              | Tanggal like dibuat         |
 
-🔗 Foreign Key:
+🔗 **Foreign Key**:
 - `post_id` → `posts(id)`
 - `id_user` → `users(id)`
 
-⚡ Trigger:
-- `trg_like_added`: Update jumlah like saat like ditambahkan
-- `trg_like_removed`: Update jumlah like saat like dihapus
+⚡ **Trigger**:
+- `trg_like_added`: Update like count saat like ditambahkan
+- `trg_like_removed`: Update like count saat like dihapus
 
 ---
 
-Semua tabel berjalan dalam **namespace `public`**, dan sudah dilengkapi dengan foreign key serta trigger untuk update otomatis saat komentar/like ditambah/dihapus.
+🗂 Semua tabel berada dalam **namespace `public`**, dan telah dilengkapi foreign key serta trigger otomatis.
 
-Jika lo pakai Supabase, pastikan sudah mengaktifkan **PostgreSQL Extension `pgcrypto`** untuk `gen_random_uuid()` agar bisa berjalan lancar.
+📌 Pastikan PostgreSQL Extension `pgcrypto` aktif agar `gen_random_uuid()` bisa berjalan dengan lancar di Supabase.
 
+---
 
 ## 🚀 Cara Menjalankan Proyek
 
@@ -141,20 +140,17 @@ cd Sosmed-Neobrutalism
 # 2. Install dependencies
 npm install
 
-# 3. Buat vite .env supabase anda
+# 3. Buat file .env dan isi Supabase config
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 
 # 4. Jalankan development server
 npm run dev
+```
 
-
-
-
-
-
-
+---
 
 ## 👤 Author
-Made with ❤️ by @Sanjikunnn
+
+Made with ❤️ by [@Sanjikunnn](https://github.com/Sanjikunnn)  
 Feel free to fork & contribute!
