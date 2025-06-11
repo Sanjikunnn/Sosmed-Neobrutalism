@@ -11,12 +11,12 @@ export default function TermsOfService() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-brutalYellow via-pink-100 to-white p-5">
       <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-lg border-4 border-brutalPink">
-        <h1 className="text-3xl font-extrabold mb-6 flex items-center gap-2 text-pink-700 font-brutal">
+        <h1 className="text-2xl font-extrabold mb-6 flex items-center gap-2 text-pink-700 font-brutal">
           <Gavel className="text-pink-700" size={32} /> Terms of Service
         </h1>
 
         <div className="mb-4 flex items-start gap-3">
-          <AlertTriangle className="mt-1 text-pink-700" size={32} />
+          <AlertTriangle className="text-pink-700" size={100} />
           <p className="text-gray-700">
             Dengan menggunakan layanan kami, Anda{" "}
             <strong>menyetujui syarat dan ketentuan</strong> yang berlaku dan
@@ -25,7 +25,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="mb-4 flex items-start gap-3">
-          <ShieldAlert className="mt-1 text-pink-700" size={32} />
+          <ShieldAlert className="mt-1 text-pink-700" size={100} />
           <p className="text-gray-700">
             Anda bertanggung jawab atas keamanan akun Anda. Jangan pernah
             membagikan kata sandi atau informasi sensitif kepada pihak lain.
@@ -33,7 +33,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="mb-4 flex items-start gap-3">
-          <Users className="mt-1 text-pink-700" size={32} />
+          <Users className="mt-1 text-pink-700" size={100} />
           <p className="text-gray-700">
             Jaga etika dan sopan santun saat berinteraksi dengan pengguna lain.
             Komentar yang bersifat <strong>ujaran kebencian, diskriminasi, atau pelecehan</strong>{" "}
@@ -42,7 +42,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="mb-4 flex items-start gap-3">
-          <MessageSquareWarning className="mt-1 text-pink-700" size={32} />
+          <MessageSquareWarning className="mt-1 text-pink-700" size={100} />
           <p className="text-gray-700">
             Dilarang keras melakukan <strong>spam, promosi berlebihan, aktivitas bot, atau penipuan</strong>{" "}
             dalam bentuk apapun.
@@ -50,7 +50,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="mb-4 flex items-start gap-3">
-          <Ban className="mt-1 text-pink-700" size={32} />
+          <Ban className="mt-1 text-pink-700" size={100} />
           <p className="text-gray-700">
             Pelanggaran terhadap syarat layanan ini dapat menyebabkan{" "}
             <strong>
@@ -61,7 +61,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="mb-4 flex items-start gap-3">
-          <Gavel className="mt-1 text-pink-700" size={32} />
+          <Gavel className="mt-1 text-pink-700" size={100} />
           <p className="text-gray-700">
             Kami berhak melakukan perubahan terhadap syarat dan ketentuan ini
             sewaktu-waktu. Perubahan akan diinformasikan melalui halaman ini.
