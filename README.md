@@ -33,6 +33,8 @@ Mengusung desain **neobrutalism** yang mencolok namun tetap elegan. 🚀
 ---
 
 ## 📁 Struktur Folder
+
+```txt
 sosmed-neobrutalism/
 ├── public/                 # File publik
 ├── src/
@@ -46,8 +48,9 @@ sosmed-neobrutalism/
 ├── .eslintrc.cjs           # Konfigurasi ESLint
 ├── index.html              # Template HTML
 ├── package.json            # Dependency dan scripts
-└── vite.config.js          # Konfigurasi Vite
+├── vite.config.js          # Konfigurasi Vite
 └── tailwind.config.js      # Konfigurasi Tailwind
+```
 
 ---
 
