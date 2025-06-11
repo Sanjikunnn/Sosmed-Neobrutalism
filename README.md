@@ -4,21 +4,27 @@ Selamat datang di **Sosmed Neobrutalism**, proyek gabut dengan vibes **neobrutal
 
 ---
 
-## 💎 Fitur-fitur yang Ada Disini
+## 💎 Halaman yang Ada Disini
 
 - ⚛️ **Halaman Daftar** – Ya fungsinya buat daftar akun ya pake email otomatis tar u dapet kodenya
 - ⚡ **Halaman Login** – Login pake email & password yg udh lu daftarin tadi, ga autocomplete ya, biar ingetan lu makin kuat
 - 💅 **Halaman Home** – Ya kaya Fesnuk intinya, Disini lu bisa posting status, nontonin status orang laen, bisa lu like, komen & subscribe anjay kek yutub ae maderfaked, (boong ko gada subs)
 - 🛠️ **Halaman Profile** – Ini halaman buat nampilin profil user sih kek fesnuk gitu lah, ya semua kek fesnuk karna gw fesnuk lovers
-- 🧼 **ESLint** – Auto bantuin kodingan kamu tetep rapi (gaguna si)
-- 🛠️ **Supabase Ready** – Buat backend sama database jadi tinggal connect ae bray
-- 🎨 **Desain Neobrutalism** – Estetik yang gak pasaran, gak ada di pasar malah
+- Dah segitu doang halamannya, kalo mau lebih ya kontribusi toddd
+---
 
+## 💎 Fitur-fitur yang Ada Disini
+
+- ⚛️ **Tema Neobrutalism** – Tema alay, font gede kebo, warna norak, pokonya gada yg bisa di nilai nying
+- ⚡ **Auth** – Daftar cukup pake email ae tar lu otomatis dapet email buat verifikasi nya, klik dah linknya 
+- 💅 **Postingan** – Gw bikin ini ya karna gw muak dengan sosmed diluar sana yang ada post gambar/video, bokep mulu yg lewat anying, maka dari itu gw bikin sosmed yg cuma bisa post teks doang, still halal brother
+- 🛠️ **Badge** – Nah ini yang bikin seru (menurut gw), badge ini u dapetin kalo lu terkenal (when ya),karna ya berdasarkan antusiasme orang gabut dari like dan komen postingan lo
+- Dah segitu aja fiturnya, kalo mau tau lebih ya lu coba aja sndiri badjingan
 ---
 
 ## 🛠️ Stack Tech-nya Nih
 
-| Teknologi     | Fungsi Kerennya                  |
+| Teknologi     | Fungsi ga gunanya                |
 |---------------|----------------------------------|
 | React         | Framework UI utama               |
 | Vite          | Dev server & bundler kilat       |
@@ -126,14 +132,14 @@ sosmed-neobrutalism/
 
 ---
 
-## 🏁 Cara Running Proyek-nya
+## 🏁 Cara Running Proyek nya
 
 ```bash
-# 1. Clone repo ini dulu
+# 1. Clone repo ini dulu todd
 git clone https://github.com/Sanjikunnn/Sosmed-Neobrutalism.git
 cd Sosmed-Neobrutalism
 
-# 2. Install semua package
+# 2. Install semua package lu
 npm install
 
 # 3. Bikin file .env dan isi ini:
